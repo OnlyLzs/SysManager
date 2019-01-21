@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.system.mapper.SysResourceMapper">
+	<resultMap id="BaseResultMap" type="com.system.entity.SysResource">
+	  <id column="resource_id" jdbcType="INTEGER" property="resourceId" />
+	  <result column="resource_name" jdbcType="VARCHAR" property="resourceName" />
+	  <result column="permission" jdbcType="VARCHAR" property="permission" />
+	  <result column="url" jdbcType="VARCHAR" property="url" />
+	  <result column="parent_id" jdbcType="INTEGER" property="parentId" />
+	  <result column="type" jdbcType="VARCHAR" property="type" />
+	  <result column="description" jdbcType="VARCHAR" property="description" />
+	  <result column="create_date" jdbcType="VARCHAR" property="createDate" />
+	  <result column="update_date" jdbcType="VARCHAR" property="updateDate" />
+	</resultMap>
+	<!-- 子菜单查询封装 -->
+	<resultMap id="ChildrenResultMap" type="com.system.entity.SysResource" extends="BaseResultMap">
+		<collection property="childrenResources" javaType="List" ofType="com.system.entity.SysResource" select="selectResourceByParentId" column="resource_id"></collection>
+	</resultMap>
+	<!-- s父菜单的Id查询子菜单 (二级菜单 三级菜单查询不出来) -->
+	<select id="selectResourceByParentId" resultType="com.system.entity.SysResource">
+		select * FROM sys_resource sr
+		where sr.parent_id = #{resourceId}
+	</select>
+	
+	<sql id="Base_Column_List">
+		resource_id, resource_name, permission, url, parent_id, type, description,
+		create_date,
+		update_date
+	</sql>
+	<select id="selectByPrimaryKey"
+		parameterType="java.lang.Integer" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from sys_resource
+		where resource_id = #{resourceId,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteByPrimaryKey"
+		parameterType="java.lang.Integer">
+		delete from sys_resource
+		where resource_id = #{resourceId,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert"
+		parameterType="com.system.entity.SysResource">
+		insert into sys_resource (resource_id, resource_name, permission,
+		url, parent_id, type,
+		description, create_date, update_date
+		)
+		values (#{resourceId,jdbcType=INTEGER}, #{resourceName,jdbcType=VARCHAR},
+		#{permission,jdbcType=VARCHAR},
+		#{url,jdbcType=VARCHAR}, #{parentId,jdbcType=INTEGER}, #{type,jdbcType=VARCHAR},
+		#{description,jdbcType=VARCHAR}, #{createDate,jdbcType=VARCHAR},
+		#{updateDate,jdbcType=VARCHAR}
+		)
+	</insert>
+	<insert id="insertSelective"
+		parameterType="com.system.entity.SysResource">
+		insert into sys_resource
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="resourceId != null">
+				resource_id,
+			</if>
+			<if test="resourceName != null">
+				resource_name,
+			</if>
+			<if test="permission != null">
+				permission,
+			</if>
+			<if test="url != null">
+				url,
+			</if>
+			<if test="parentId != null">
+				parent_id,
+			</if>
+			<if test="type != null">
+				type,
+			</if>
+			<if test="description != null">
+				description,
+			</if>
+			<if test="createDate != null">
+				create_date,
+			</if>
+			<if test="updateDate != null">
+				update_date,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="resourceId != null">
+				#{resourceId,jdbcType=INTEGER},
+			</if>
+			<if test="resourceName != null">
+				#{resourceName,jdbcType=VARCHAR},
+			</if>
+			<if test="permission != null">
+				#{permission,jdbcType=VARCHAR},
+			</if>
+			<if test="url != null">
+				#{url,jdbcType=VARCHAR},
+			</if>
+			<if test="parentId != null">
+				#{parentId,jdbcType=INTEGER},
+			</if>
+			<if test="type != null">
+				#{type,jdbcType=VARCHAR},
+			</if>
+			<if test="description != null">
+				#{description,jdbcType=VARCHAR},
+			</if>
+			<if test="createDate != null">
+				#{createDate,jdbcType=VARCHAR},
+			</if>
+			<if test="updateDate != null">
+				#{updateDate,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective"
+		parameterType="com.system.entity.SysResource">
+		update sys_resource
+		<set>
+			<if test="resourceName != null">
+				resource_name = #{resourceName,jdbcType=VARCHAR},
+			</if>
+			<if test="permission != null">
+				permission = #{permission,jdbcType=VARCHAR},
+			</if>
+			<if test="url != null">
+				url = #{url,jdbcType=VARCHAR},
+			</if>
+			<if test="parentId != null">
+				parent_id = #{parentId,jdbcType=INTEGER},
+			</if>
+			<if test="type != null">
+				type = #{type,jdbcType=VARCHAR},
+			</if>
+			<if test="description != null">
+				description = #{description,jdbcType=VARCHAR},
+			</if>
+			<if test="createDate != null">
+				create_date = #{createDate,jdbcType=VARCHAR},
+			</if>
+			<if test="updateDate != null">
+				update_date = #{updateDate,jdbcType=VARCHAR},
+			</if>
+		</set>
+		where resource_id = #{resourceId,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey"
+		parameterType="com.system.entity.SysResource">
+		update sys_resource
+		set resource_name = #{resourceName,jdbcType=VARCHAR},
+		permission = #{permission,jdbcType=VARCHAR},
+		url = #{url,jdbcType=VARCHAR},
+		parent_id = #{parentId,jdbcType=INTEGER},
+		type = #{type,jdbcType=VARCHAR},
+		description = #{description,jdbcType=VARCHAR},
+		create_date = #{createDate,jdbcType=VARCHAR},
+		update_date = #{updateDate,jdbcType=VARCHAR}
+		where resource_id = #{resourceId,jdbcType=INTEGER}
+	</update>
+	
+	<!-- s根据用户id 查询对应的权限 -->
+	<select id="queryByUserId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+		SELECT
+		<include refid="Base_Column_List" />
+		FROM
+		sys_resource sr
+		LEFT JOIN sys_role_resource srr ON srr.resource_id = sr.resource_id
+		LEFT JOIN sys_role sro ON sro.role_id = srr.role_id
+		LEFT JOIN sys_user_role sur ON sur.role_id = sro.role_id
+		LEFT JOIN sys_user su ON su.user_id = sur.user_id
+		WHERE
+		su.user_id = #{userId}
+	</select>
+	<!-- s根据用户id 查询用户菜单 先查父菜单 再查子菜单 -->
+	<select id="queryMenuByUserId" parameterType="java.lang.Integer" resultMap="ChildrenResultMap">
+		SELECT
+		sr.*
+		FROM
+		sys_resource sr
+		LEFT JOIN sys_role_resource srr ON srr.resource_id = sr.resource_id
+		LEFT JOIN sys_role sro ON sro.role_id = srr.role_id
+		LEFT JOIN sys_user_role sur ON sur.role_id = sro.role_id
+		LEFT JOIN sys_user su ON su.user_id = sur.user_id
+		WHERE
+		su.user_id = #{userId} and sr.type = '0'
+	</select>
+	
+</mapper>
