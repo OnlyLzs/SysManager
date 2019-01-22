@@ -130,14 +130,22 @@
 			<artifactId>ehcache-core</artifactId>
 			<version>2.4.8</version>
 		</dependency>
-		<!-- 引入pagehelper -->
+		<!--thymeleaf作为前端模板引擎，使用HTML文件，没法引入shiro的tag lib，此时如果要使用shiro的话， 可以引入 
+			thymeleaf-extras-shiro.jar这个拓展包来曲线实现shiro的前端验证 -->
+		<dependency>
+			<groupId>com.github.theborakompanioni</groupId>
+			<artifactId>thymeleaf-extras-shiro</artifactId>
+			<!-- <version>1.2.1</version> -->
+			<version>2.0.0</version>
+		</dependency>
+		<!-- s引入pagehelper -->
 		<!-- https://mvnrepository.com/artifact/com.github.pagehelper/pagehelper-spring-boot-starter -->
 		<dependency>
 			<groupId>com.github.pagehelper</groupId>
 			<artifactId>pagehelper-spring-boot-starter</artifactId>
 			<version>1.2.5</version>
 		</dependency>
-		<!--引入Druid数据源 -->
+		<!--s引入Druid数据源 -->
 		<!-- https://mvnrepository.com/artifact/com.alibaba/druid -->
 		<dependency>
 			<groupId>com.alibaba</groupId>
@@ -146,14 +154,14 @@
 		</dependency>
 	</dependencies>
 
-	<build>
+	<!-- <build>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 		</plugins>
-	</build>
+	</build> -->
 
 	<modules>
 		<module>System-web</module>

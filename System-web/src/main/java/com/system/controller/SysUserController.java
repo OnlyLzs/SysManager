@@ -38,9 +38,9 @@ public class SysUserController {
 	
 	@ResponseBody
 	@RequestMapping("/queryUserByCondition")
-	public StatusResult queryUserByCondition() {
+	public StatusResult queryUserByCondition(Integer pageNum, Integer pageSize, SysUser sysUser, String condition) {
 		logger.info("后台 查询所有用户");
-		return sysUserService.queryUserByCondition();
+		return sysUserService.queryUserByCondition(pageNum, pageSize, sysUser, condition);
 	}
 	
 }

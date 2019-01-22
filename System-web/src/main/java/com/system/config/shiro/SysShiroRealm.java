@@ -53,7 +53,9 @@ public class SysShiroRealm extends AuthorizingRealm {
 		// s这个地方从数据中查询用户，并且关联查询出用户对应的角色以及权限 ，实现权限的认证
 		List<SysResource> resources = sysResourceService.queryByUserId(user.getUserId());
 		for(SysResource sysResource:resources) {
-			authorizationInfo.addStringPermission(sysResource.getPermission());
+			if(sysResource.getPermission()!=null) {
+				authorizationInfo.addStringPermission(sysResource.getPermission());
+			}
 		}
 		return authorizationInfo;
 	}

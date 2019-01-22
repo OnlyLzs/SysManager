@@ -41,12 +41,12 @@ public class LoginController extends UserCommon {
 	@Autowired
 	SysResourceService sysResourceService;
 
-	/*@RequestMapping(value = { "/login" }, method = RequestMethod.GET)
+	@RequestMapping(value = { "/login" }, method = RequestMethod.GET)
 	public String login() {
 
 		logger.info("后台  /login 跳转登录");
 		return "/login";
-	}*/
+	}
 	
 	@RequestMapping(value = { "/login" }, method = RequestMethod.POST)
 	public String login(@RequestParam("username") String username, @RequestParam("password") String password, ModelMap model, HttpServletRequest request) {

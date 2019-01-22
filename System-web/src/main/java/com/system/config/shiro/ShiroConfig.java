@@ -12,6 +12,8 @@ import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import at.pollux.thymeleaf.shiro.dialect.ShiroDialect;
+
 
 /**
  * @class ShiroConfig
@@ -93,10 +95,17 @@ public class ShiroConfig {
         return credentialsMatcher;
     }
     
-    /*@Bean
+    /**
+     * @Description thymeleaf shiro 用到？
+     * @author Jason
+     * @date Jan 22, 2019
+     * @return
+     */
+    @Bean
     public ShiroDialect shiroDialect() {
         return new ShiroDialect();
-    }*/
+    }
+
 
    
 }

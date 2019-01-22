@@ -25,11 +25,15 @@ public interface SysUserService {
 	SysUser queryByUserName(String username);
 
 	/**
-	 * @Description
+	 * @Description 查询系统用户信息
 	 * @author Jason
+	 * @param condition 
+	 * @param sysUser 
+	 * @param pageSize 
+	 * @param pageNum 
 	 * @date Jan 17, 2019
 	 * @return
 	 */
-	StatusResult queryUserByCondition();
+	StatusResult queryUserByCondition(Integer pageNum, Integer pageSize, SysUser sysUser, String condition);
 
 }

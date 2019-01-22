@@ -1,5 +1,8 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+	xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
 <head>
   <meta charset="utf-8">
   <title>layui</title>
@@ -9,14 +12,16 @@
   <link rel="stylesheet" href="layui/css/layui.css" th:href="@{/layui/css/layui.css}" media="all">
 </head>
 <body>
- 
+ 	
+    <button shiro:hasPermission="sys:user:list" class="layui-btn layui-btn-sm" lay-event="getCheckLength">2222</button>
+     
 <table class="layui-hide" id="table_user" lay-filter="table_user_filter"></table>
  
 <script type="text/html" id="toolbar_user">
   <div class="layui-btn-container">
-    <button class="layui-btn layui-btn-sm" lay-event="getCheckData">获取选中行数据</button>
-    <button class="layui-btn layui-btn-sm" lay-event="getCheckLength">获取选中数目</button>
-    <button class="layui-btn layui-btn-sm" lay-event="isAll">验证是否全选</button>
+    <button shiro:hasPermission="user:manage" class="layui-btn layui-btn-sm" lay-event="getCheckData">获取选中行数据</button>
+    <button shiro:hasPermission="sys:user:list" class="layui-btn layui-btn-sm" lay-event="getCheckLength">获取选中数目</button>
+    <button shiro:hasPermission="user:manage" class="layui-btn layui-btn-sm" lay-event="isAll">验证是否全选</button>
   </div>
 </script>
 <script type="text/html" id="bar_user">

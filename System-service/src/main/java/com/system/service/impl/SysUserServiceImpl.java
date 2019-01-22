@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.system.entity.SysUser;
 import com.system.mapper.SysUserMapper;
 import com.system.response.ResponseStatusMsg;
@@ -32,10 +34,12 @@ public class SysUserServiceImpl implements SysUserService {
 	}
 
 	@Override
-	public StatusResult queryUserByCondition() {
-		List<SysUser> sysUsers = sysUserMapper.queryUserByCondition();
-		if(!ObjectUtils.isEmpty(sysUsers)) {
-			return StatusResult.ok(ResponseStatusMsg.FIND_SUCCESS.getMsg(), sysUsers);
+	public StatusResult queryUserByCondition(Integer pageNum, Integer pageSize, SysUser sysUser, String condition) {
+		PageHelper.startPage(pageNum, pageSize);
+		List<SysUser> sysUsers = sysUserMapper.queryUserByCondition(sysUser, condition);
+		PageInfo<SysUser> pageInfo = new PageInfo<>(sysUsers);
+		if(!ObjectUtils.isEmpty(pageInfo)) {
+			return StatusResult.ok(ResponseStatusMsg.FIND_SUCCESS.getMsg(), pageInfo);
 		}
 		return StatusResult.ok(ResponseStatusMsg.FIND_NONE.getMsg());
 	}
