@@ -96,7 +96,7 @@ public class ShiroConfig {
     }
     
     /**
-     * @Description thymeleaf shiro 用到？
+     * @Description ShiroDialect，为了在thymeleaf里使用shiro的标签的bean
      * @author Jason
      * @date Jan 22, 2019
      * @return

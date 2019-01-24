@@ -2,11 +2,13 @@ package com.system.controller;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -38,7 +40,10 @@ public class SysUserController {
 	
 	@ResponseBody
 	@RequestMapping("/queryUserByCondition")
-	public StatusResult queryUserByCondition(Integer pageNum, Integer pageSize, SysUser sysUser, String condition) {
+	public StatusResult queryUserByCondition(
+			@RequestParam(defaultValue="1")Integer pageNum,
+			@RequestParam(defaultValue="10")Integer pageSize,
+			SysUser sysUser, String condition) {
 		logger.info("后台 查询所有用户");
 		return sysUserService.queryUserByCondition(pageNum, pageSize, sysUser, condition);
 	}

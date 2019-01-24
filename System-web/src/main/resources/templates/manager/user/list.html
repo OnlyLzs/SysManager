@@ -12,21 +12,49 @@
   <link rel="stylesheet" href="layui/css/layui.css" th:href="@{/layui/css/layui.css}" media="all">
 </head>
 <body>
- 	
-    <button shiro:hasPermission="sys:user:list" class="layui-btn layui-btn-sm" lay-event="getCheckLength">2222</button>
-     
-<table class="layui-hide" id="table_user" lay-filter="table_user_filter"></table>
+	<div class="tableSearch layui-form">
+		用户姓名：
+		<div class="layui-inline">
+			<input class="layui-input" name="id" id="name" autocomplete="off">
+		</div>
+		用户电话：
+		<div class="layui-inline">
+			<input class="layui-input" name="id" id="mobile" autocomplete="off">
+		</div>
+		用户状态：
+		<div class="layui-inline">
+			<select name="id" id="status">
+				<option value="">请选择</option>
+				<option value="1">正常</option>
+				<option value="0">禁封</option>
+			</select>
+		</div>
+		邮箱或备注：
+		<div class="layui-input-inline">
+			<input class="layui-input" name="id" id="other" autocomplete="off">
+		</div>
+		<button class="layui-btn" data-type="searchBtn">搜索</button>
+	</div>
+
+	<table class="layui-hide" id="table_user" lay-filter="table_user_filter"></table>
  
 <script type="text/html" id="toolbar_user">
   <div class="layui-btn-container">
-    <button shiro:hasPermission="user:manage" class="layui-btn layui-btn-sm" lay-event="getCheckData">获取选中行数据</button>
-    <button shiro:hasPermission="sys:user:list" class="layui-btn layui-btn-sm" lay-event="getCheckLength">获取选中数目</button>
-    <button shiro:hasPermission="user:manage" class="layui-btn layui-btn-sm" lay-event="isAll">验证是否全选</button>
+    <button shiro:hasPermission="sys:user:add" class="layui-btn layui-btn-sm" lay-event="add"><i class="layui-icon layui-icon-add-1"></i></button> 
+    <button class="layui-btn layui-btn-sm" lay-event="update"><i class="layui-icon layui-icon-edit"></i></button>
+	<button class="layui-btn layui-btn-sm" lay-event="delete"><i class="layui-icon layui-icon-delete"></i></button>
   </div>
 </script>
 <script type="text/html" id="bar_user">
   <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
   <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+<script type="text/html" id="statusTemplet">
+  {{#  if(d.status == 1){ }}
+     <input type="checkbox" name="lock" value="{{d.status}}" title="正常" lay-filter="lockDemo" checked>
+  {{#  } else { }}
+    <input type="checkbox" name="lock" value="{{d.status}}" title="正常" lay-filter="lockDemo" >
+  {{#  } }}
 </script>
               
 <script type="text/javascript" th:src="@{/js/jquery-3.3.1.min.js}"></script>          
@@ -34,30 +62,35 @@
 <!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 --> 
  
 <script>
-layui.use('table', function(){
+layui.use(['table','layer'], function(){
   var table = layui.table;
-  
+  var layer = layui.layer;
   table.render({
     elem: '#table_user'
     ,url:'/sys/user/queryUserByCondition'
+   	,height: 'full-200'
+   	,request: {
+   	    pageName: 'pageNum' //页码的参数名称，默认：page
+   	    ,limitName: 'pageSize' //每页数据量的参数名，默认：limit
+   	  }
     ,toolbar: '#toolbar_user'
     ,title: '用户数据表'
     ,totalRow: true
     ,cols: [
     	[
       {type: 'checkbox', fixed: 'left'}
-      ,{field:'userId', title:'ID', width:80, fixed: 'left', unresize: true, sort: true, totalRowText: '合计'}
-      ,{field:'userName', title:'用户名', width:120, edit: 'text'}
-      ,{field:'password', title:'密码', width:80, sort: true, totalRow: true}
-      ,{field:'email', title:'邮箱', width:150, edit: 'text', templet: function(res){
+      ,{field:'userId', title:'ID', fixed: 'left', width:50, unresize: true, sort: true, totalRowText: '合计'}
+      ,{field:'userName', title:'用户名', edit: 'text'}
+      ,{field:'password', title:'密码', sort: true, totalRow: true}
+      ,{field:'email', title:'邮箱', edit: 'text', templet: function(res){
         return '<em>'+ res.email +'</em>'
       }}
       ,{field:'mobile', title:'电话', sort: true}
-      ,{field:'status', title:'状态', width:100, sort: true, totalRow: true}
-      ,{field:'remake', title:'备注', width:100}
+      ,{field:'status', title:'状态', width:120, sort: true, templet: '#statusTemplet'}
+      ,{field:'remake', title:'备注',}
       ,{field:'createDate', title:'创建时间'}
       ,{field:'updateDate', title:'修改时间'}
-      ,{fixed: 'right', title:'操作', toolbar: '#bar_user', width:150}
+      ,{fixed: 'right', title:'操作', toolbar: '#bar_user'}
     	]
     ]
     ,page: true
@@ -68,29 +101,75 @@ layui.use('table', function(){
 	  return {
 	    "code": res.status, //解析接口状态
 	    "msg": res.msg, //解析提示文本
-	    //"count": res.total, //解析数据长度
-	    "data": res.data //解析数据列表
+	    "count": res.data.total, //解析数据长度
+	    "data": res.data.list //解析数据列表
 	  };
 	}
+	,id:'tableUserReload'
   });
-  
-  //s工具栏事件
-  table.on('toolbar(table_user)', function(obj){
-    var checkStatus = table.checkStatus(obj.config.id);
+//监听事件
+  table.on('toolbar(table_user_filter)', function(obj){
+	//var checkStatus = table.checkStatus(obj.config.id);
+	var checkStatus = table.checkStatus('tableUserReload');
+	var data = checkStatus.data
+	,deleteList=[];
+	data.forEach(function(n,i){
+		deleteList.push(n.userId);
+	});
     switch(obj.event){
-      case 'getCheckData':
-        var data = checkStatus.data;
-        layer.alert(JSON.stringify(data));
-      break;
-      case 'getCheckLength':
-        var data = checkStatus.data;
-        layer.msg('选中了：'+ data.length + ' 个');
-      break;
-      case 'isAll':
-        layer.msg(checkStatus.isAll ? '全选': '未全选')
-      break;
+		case 'add':
+	        layer.alert(JSON.stringify(data));
+		break;
+		case 'update':
+		  if(data.length === 0){
+		    layer.msg('请选择一行');
+		  } else if(data.length > 1){
+		    layer.msg('只能同时编辑一个');
+		  } else {
+		    layer.alert('编辑 [id]：'+ checkStatus.data[0].userId);
+		  }
+		break;
+		case 'delete':
+		  if(data.length === 0){
+		    layer.msg('请选择一行');
+		  } else {
+		    batchDeleteUser(deleteList);
+		  }
+		break;
     };
   });
+	
+	var $ = layui.$, active = {
+		searchBtn : function() {
+			var name = $('#name');
+			var mobile = $('#mobile');
+			var status = $('#status');
+			var other = $('#other');
+			//执行重载
+			table.reload('tableUserReload', {
+				page : {
+					curr : 1//重新从第 1 页开始
+				},
+				where : {
+					userName : name.val(),
+					mobile : mobile.val(),
+					status : status.val(),
+					condition : other.val()
+				}
+			});
+		}
+	};
+	//s监听搜索按钮的事件
+	$('.tableSearch .layui-btn').on('click', function(){
+	    var type = $(this).data('type');
+	    active[type] ? active[type].call(this) : '';
+	  });
+	
+	function batchDeleteUser(deleteList){
+		layer.msg(JSON.stringify(deleteList)+"----"+deleteList)
+	}
+	
+
 });
 </script>
 

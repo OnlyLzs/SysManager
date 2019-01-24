@@ -149,17 +149,17 @@
 		<where>
 			<!-- sysUser实体属性 -->
 			<if test="sysUser.userName!=null and sysUser.userName!=''">
-				and user_name = #{sysUser.userName,jdbcType=VARCHAR}
+				and user_name like "%"#{sysUser.userName,jdbcType=VARCHAR}"%"
 			</if>
 			<if test="sysUser.mobile!=null and sysUser.mobile!=''">
-				and mobile = #{sysUser.mobile,jdbcType=VARCHAR}
+				and mobile like "%"#{sysUser.mobile,jdbcType=VARCHAR}"%"
 			</if>
-			<if test="sysUser.status!=null and sysUser.status!=''">
+			<if test="sysUser.status!=null">
 				and status = #{sysUser.status,jdbcType=INTEGER}
 			</if>
 			<!-- condition -->
 			<if test="condition!=null and condition!=''">
-				 and concat(remake,email) like "%"#{condition}"%"
+				 and concat_ws('',remake,email) like "%"#{condition}"%"
 			</if>
 		</where>
 	</select>
