@@ -44,4 +44,10 @@ public class SysUserServiceImpl implements SysUserService {
 		return StatusResult.ok(ResponseStatusMsg.FIND_NONE.getMsg());
 	}
 
+	@Override
+	public SysUser queryById(Integer id) {
+		SysUser sysUser = sysUserMapper.selectByPrimaryKey(id);
+		return sysUser;
+	}
+
 }

@@ -36,4 +36,15 @@ public interface SysUserService {
 	 */
 	StatusResult queryUserByCondition(Integer pageNum, Integer pageSize, SysUser sysUser, String condition);
 
+	/**
+	 * @Description 根据Id查询用户信息
+	 * @author Jason
+	 * @date Jan 25, 2019
+	 * @param id
+	 * @return
+	 */
+	SysUser queryById(Integer id);
+
+	
+
 }

@@ -1,5 +1,7 @@
 package com.system.mapper;
 
+import java.util.List;
+
 import com.system.entity.SysRole;
 
 public interface SysRoleMapper {
@@ -14,4 +16,8 @@ public interface SysRoleMapper {
     int updateByPrimaryKeySelective(SysRole record);
 
     int updateByPrimaryKey(SysRole record);
+
+	List<SysRole> queryAll();
+
+	List<SysRole> queryByUserId(Integer userId);
 }

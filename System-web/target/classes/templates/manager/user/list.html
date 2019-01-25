@@ -126,7 +126,7 @@ layui.use(['table','layer'], function(){
 		  } else if(data.length > 1){
 		    layer.msg('只能同时编辑一个');
 		  } else {
-		    layer.alert('编辑 [id]：'+ checkStatus.data[0].userId);
+		    editUser(data);
 		  }
 		break;
 		case 'delete':
@@ -167,6 +167,21 @@ layui.use(['table','layer'], function(){
 	
 	function batchDeleteUser(deleteList){
 		layer.msg(JSON.stringify(deleteList)+"----"+deleteList)
+	}
+	function editUser(data){
+		var id = data[0].userId;
+		var url = "/sys/user/edit";
+	    if (id != null) {
+	        layer.open({
+	            type: 2,
+	            title: '修改',
+	            shadeClose: false,
+	            shade: [0.3, '#000'],
+	            maxmin: true, //开启最大化最小化按钮
+	            area: ['893px', '600px'],
+	            content: url + "/" + id
+	        });
+	    }
 	}
 	
 

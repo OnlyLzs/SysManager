@@ -20,8 +20,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.system.entity.SysResource;
+import com.system.entity.SysRole;
 import com.system.entity.SysUser;
 import com.system.service.SysResourceService;
+import com.system.service.SysRoleService;
 import com.system.service.SysUserService;
 import com.system.utils.PasswordUtils;
 
@@ -39,6 +41,9 @@ public class SysShiroRealm extends AuthorizingRealm {
 	SysUserService sysUserService;
 	
 	@Autowired
+	SysRoleService sysRoleService;
+	
+	@Autowired
 	SysResourceService sysResourceService;
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -52,6 +57,10 @@ public class SysShiroRealm extends AuthorizingRealm {
 		SysUser user = (SysUser) principals.getPrimaryPrincipal();
 		// s这个地方从数据中查询用户，并且关联查询出用户对应的角色以及权限 ，实现权限的认证
 		List<SysResource> resources = sysResourceService.queryByUserId(user.getUserId());
+		/*List<SysRole> roles = sysRoleService.queryByUserId(user.getUserId());
+		for(SysRole role :roles) {
+			authorizationInfo.addRole(role.getRoleName());
+		}*/
 		for(SysResource sysResource:resources) {
 			if(sysResource.getPermission()!=null) {
 				authorizationInfo.addStringPermission(sysResource.getPermission());
