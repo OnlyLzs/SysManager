@@ -45,6 +45,15 @@ public interface SysUserService {
 	 */
 	SysUser queryById(Integer id);
 
+	/**
+	 * @Description 修改用户信息 包含权限
+	 * @author Jason
+	 * @date Jan 28, 2019
+	 * @param str
+	 * @return
+	 */
+	StatusResult updateUser(String str);
+
 	
 
 }

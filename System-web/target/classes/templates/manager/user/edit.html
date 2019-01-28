@@ -21,7 +21,8 @@
 </head>
 <body>
 	<div class="lzsCenter">
-		<form class="layui-form" action="">
+		<form class="layui-form" action="" method="post" id="userUpdateForm">
+		<input type="text" hidden="true" th:field="${sysUser.userId}">
 			<div class="layui-form-item">
 				<div class="layui-inline">
 					<label class="layui-form-label">用户名</label>
@@ -62,7 +63,7 @@
 				<div class="layui-inline">
 					<label class="layui-form-label">角色</label>
 					<div class="layui-input-block">
-						<select xm-select="select-roles" xm-select-search="" name="sysUser.roles" id="sysUser.roles"  th:roles="${sysUser.roles}">
+						<select xm-select="select-roles" xm-select-search="" name="roleIds" id="roleIds"  th:rolesId="${roleIdList}">
 						    <option value="">---请选择---</option>
 						    <option th:each="role : ${sysRoles}" th:value="${role.roleId}"
 									th:text="${role.roleName}">option</option>
@@ -73,7 +74,7 @@
 			<div class="layui-form-item">
 				<label class="layui-form-label">状态</label>
 				<div class="layui-input-block">
-					<input type="checkbox" lay-skin="switch" name="status" value="1"
+					<input type="checkbox" lay-skin="switch" id="status" name="status" value= "1"
 						lay-text="开启|禁用" th:checked="${sysUser.status} eq 1 ? true:false" >
 				</div>
 			</div>
@@ -87,37 +88,55 @@
 	</div>
 	
 <script type="text/javascript">
-    //全局定义一次, 加载formSelects
+    //s全局定义一次, 加载formSelects
     layui.config({
-        base: '/layui/plugs/formSelects/' //此处路径请自行处理, 可以使用绝对路径
+        base: '/layui/plugs/formSelects/' //s此处路径请自行处理, 可以使用绝对路径
     }).extend({
         formSelects: 'formSelects-v4'
     });
-    //加载模块
+    //s加载模块
     layui.use(['form', 'formSelects', 'layer'], function(){
-    	var form = layui.form; //只有执行了这一步，部分表单元素才会自动修饰成功
+    	var form = layui.form; //s只有执行了这一步，部分表单元素才会自动修饰成功
     	var formSelects = layui.formSelects;
-    	var data = $("select[id='sysUser.roles']").attr("roles")
+    	var data = $("select[id='roleIds']").attr("rolesId");
     	console.log("角色"+data)
-    	layer.msg(data[0].roleName)
-    	var list = new Array()
-    	for(var i=0;i<data.length;i++){
-    		list[i] =data[i].roleId 
+    	//s截取字符串 【1,2】-》1,2  String类型
+    	var rolesId = data.substring(data.indexOf("[")+1,data.indexOf("]"))
+    	//s分割字符串 变为array类型
+    	var arr = rolesId.split(",")
+    	//s将里面的 String 1,2 转为 int 1,2 
+    	var roleIdList= new Array() 
+    	for (var i=0;i<arr.length;i++){
+    		roleIdList.push(parseInt(arr[i]));
     	}
-		
-		formSelects.value('select-roles', [list], true); 
-    	//监听提交
+    	//layer.msg(arr+$.type(arr)+roleIdList+$.type(roleIdList)+"----"+parseInt(arr))
+		formSelects.value('select-roles', roleIdList, true); 
+    	//s监听提交
 		form.on('submit(submitFilter)', function(data){
-			
-			
-		  	layer.msg(JSON.stringify(data.field)+"-----"+rolesId);
-			
-		  return false;
+		  	layer.msg(JSON.stringify(data.field)+"-----"+rolesId+"----------"+$('#userUpdateForm').serialize());
+		  	$.ajax({
+		  		url : "/sys/user/update",
+		  		dateType : "json",
+		  		type : "post",
+		  		contentType:"application/json",
+		  		data : JSON.stringify(data.field), 
+		  		success : function(data) {
+		  			if(data.status==200){
+		  				layer.msg(data.msg,{icon: 1});
+		  			}else{
+		  				layer.msg(data.msg,{icon: 2});
+		  			}
+		  		},
+		  		error : function(){
+		  			layer.msg('修改失败', {icon: 2});
+		  		}
+		  	})
+		  	return false;
 		});
 		
 		//但是，如果你的HTML是动态生成的，自动渲染就会失效
 		//因此你需要在相应的地方，执行下述方法来手动渲染，跟这类似的还有 element.init();
-		// form.render();
+		 form.render();
        
          
     });

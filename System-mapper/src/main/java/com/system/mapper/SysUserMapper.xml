@@ -96,6 +96,9 @@
 		parameterType="com.system.entity.SysUser">
 		update sys_user
 		<set>
+			<!-- s让修改时间等于当前时间 -->
+				update_date = NOW(),
+				
 			<if test="userName != null">
 				user_name = #{userName,jdbcType=VARCHAR},
 			</if>
@@ -108,11 +111,11 @@
 			<if test="email != null">
 				email = #{email,jdbcType=VARCHAR},
 			</if>
+			<if test="status != null">
+				status = #{status,jdbcType=INTEGER},
+			</if>
 			<if test="createDate != null">
 				create_date = #{createDate,jdbcType=VARCHAR},
-			</if>
-			<if test="updateDate != null">
-				update_date = #{updateDate,jdbcType=VARCHAR},
 			</if>
 			<if test="remake != null">
 				remake = #{remake,jdbcType=VARCHAR},

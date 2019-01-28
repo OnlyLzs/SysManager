@@ -1,5 +1,6 @@
 package com.system.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.security.auth.Subject;
@@ -11,11 +12,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.system.entity.SysRole;
 import com.system.entity.SysUser;
 import com.system.response.StatusResult;
@@ -57,16 +62,41 @@ public class SysUserController {
 	}
 	
 	@RequestMapping("/edit/{id}")
-	public ModelAndView editUser(@PathVariable("id")Integer id, ModelAndView mv) {
+	public ModelAndView editUserHTMl(@PathVariable("id")Integer id, ModelAndView mv) {
 		logger.info("后台 跳转到编辑用户界面");
 		SysUser sysUser = sysUserService.queryById(id);
 		List<SysRole> sysRoles = sysRoleService.queryAll();
 		List<SysRole> roles = sysRoleService.queryByUserId(id);
-		sysUser.setRoles(roles);
+		List<Integer> roleIdList = new ArrayList<>();
+		for (SysRole role : roles) {
+			roleIdList.add(role.getRoleId());
+		}
+		mv.addObject("roleIdList", roleIdList.toString());
 		mv.addObject("sysUser", sysUser);
 		mv.addObject("sysRoles", sysRoles);
 		mv.setViewName("/user/edit");
 		return mv;
+	}
+	
+	/*
+	 * @requestbody的含义是在当前对象获取整个http请求的body里面的所有数据,
+	 * 并且从@requestbody设计上来说，只获取一次就可以拿到请求body里面的所有数据，
+	 * 就没必要出现有多个@requestbody出现在controller的函数的形参列表当中
+	 */
+	/**
+	 * 
+	 * @Description 修改用户信息包含权限
+	 * @author Jason
+	 * @date Jan 28, 2019
+	 * @param str 前台传来的参数  包含实体属性，赋予的id
+	 * @param mv
+	 */
+	@PostMapping("/update")
+	@ResponseBody
+	public StatusResult updateUser(@RequestBody String str, ModelAndView mv) {
+		logger.info("后台 用户信息修改");
+		
+		return sysUserService.updateUser(str);
 	}
 	
 }
