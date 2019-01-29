@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -85,7 +86,7 @@ public class SysUserController {
 	 */
 	/**
 	 * 
-	 * @Description 修改用户信息包含权限
+	 * @Description 修改用户信息包含角色
 	 * @author Jason
 	 * @date Jan 28, 2019
 	 * @param str 前台传来的参数  包含实体属性，赋予的id
@@ -93,10 +94,37 @@ public class SysUserController {
 	 */
 	@PostMapping("/update")
 	@ResponseBody
-	public StatusResult updateUser(@RequestBody String str, ModelAndView mv) {
+	public StatusResult updateUser(@RequestBody String str) {
 		logger.info("后台 用户信息修改");
 		
 		return sysUserService.updateUser(str);
+	}
+	
+	/*
+	 * 前台 ajax 传个 array 这里 用 List<Integer>ids 和 Integer[]  ids 都能接收到
+	 */
+	@ResponseBody
+	@RequestMapping("/delete")
+	public StatusResult deleteUser(@RequestParam(value="ids[]") List<Integer>ids) {
+		logger.info("后台  用户删除");
+		
+		return sysUserService.deleteUser(ids);
+	}
+	
+	@GetMapping("/add")
+	public ModelAndView addUserHTML(ModelAndView mv) {
+		logger.info("后台 添加用户界面跳转");
+		List<SysRole> sysRoles = sysRoleService.queryAll();
+		mv.addObject("sysRoles", sysRoles);
+		mv.setViewName("/user/add");
+		return mv;
+	}
+	
+	@ResponseBody
+	@PostMapping("/add")
+	public StatusResult addUser(@RequestBody String userInfo) {
+		logger.info("后台 添加用户");
+		return sysUserService.saveUser(userInfo);
 	}
 	
 }

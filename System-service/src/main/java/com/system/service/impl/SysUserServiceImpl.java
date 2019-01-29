@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -17,6 +18,7 @@ import com.system.response.ResponseStatusMsg;
 import com.system.response.StatusResult;
 import com.system.service.SysUserRoleService;
 import com.system.service.SysUserService;
+import com.system.utils.PasswordUtils;
 
 /**
  * 用户接口实现类
@@ -65,9 +67,37 @@ public class SysUserServiceImpl implements SysUserService {
 		int result = sysUserMapper.updateByPrimaryKeySelective(sysUser);
 		sysUserRoleService.saveOrUpdate(sysUser.getUserId(), roleIds);
 		if(result>0) {
-			return StatusResult.ok();
+			return StatusResult.ok(ResponseStatusMsg.UPDATE_SUCCESS.getMsg());
 		}
-		return StatusResult.error("删除出错了，用户不存在") ;
+		return StatusResult.error(ResponseStatusMsg.UPDATE_FAIL.getMsg()) ;
+	}
+
+	@Override
+	@Transactional
+	public StatusResult deleteUser(List<Integer> ids) {
+		//s 先删除中间表的数据 再删除用户(可能没有角色) 
+		sysUserRoleService.deleteRoleByUserIds(ids);
+		//s删除用户
+		int result = sysUserMapper.deleteUserByIds(ids);
+		if (result>0) {
+			return StatusResult.ok(ResponseStatusMsg.DELETE_SUCCESS.getMsg());
+		}
+		return StatusResult.error(ResponseStatusMsg.DELETE_FAIL.getMsg());
+	}
+
+	@Override
+	@Transactional
+	public StatusResult saveUser(String userInfo) {
+		JSONObject jsonObject = JSONObject.parseObject(userInfo);
+		SysUser sysUser = JSON.toJavaObject(jsonObject, SysUser.class);
+		sysUser.setPassword(PasswordUtils.encodPassword(sysUser.getPassword()));
+		int userResult = sysUserMapper.insertSelective(sysUser);
+		String roleIds = jsonObject.getString("roleIds");
+		sysUserRoleService.saveOrUpdate(sysUser.getUserId(), roleIds);
+		if(userResult>0) {
+			return StatusResult.ok(ResponseStatusMsg.ADD_SUCCESS.getMsg());
+		}
+		return StatusResult.error(ResponseStatusMsg.ADD_FAIL.getMsg());
 	}
 
 }

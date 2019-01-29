@@ -95,8 +95,12 @@
         formSelects: 'formSelects-v4'
     });
     //s加载模块
-    layui.use(['form', 'formSelects', 'layer'], function(){
+    layui.use(['form', 'formSelects', 'layer', 'table'], function(){
+    	
+    	//s注意：parent 是 JS 自带的全局对象，可用于操作父页面
+    	var index = parent.layer.getFrameIndex(window.name); //s获取窗口索引
     	var form = layui.form; //s只有执行了这一步，部分表单元素才会自动修饰成功
+    	var table = layui.table;
     	var formSelects = layui.formSelects;
     	var data = $("select[id='roleIds']").attr("rolesId");
     	console.log("角色"+data)
@@ -113,7 +117,7 @@
 		formSelects.value('select-roles', roleIdList, true); 
     	//s监听提交
 		form.on('submit(submitFilter)', function(data){
-		  	layer.msg(JSON.stringify(data.field)+"-----"+rolesId+"----------"+$('#userUpdateForm').serialize());
+		  	//layer.msg(JSON.stringify(data.field)+"-----"+rolesId+"----------"+$('#userUpdateForm').serialize());
 		  	$.ajax({
 		  		url : "/sys/user/update",
 		  		dateType : "json",
@@ -122,23 +126,25 @@
 		  		data : JSON.stringify(data.field), 
 		  		success : function(data) {
 		  			if(data.status==200){
-		  				layer.msg(data.msg,{icon: 1});
+		  				parent.layer.msg(data.msg,{icon: 1});
 		  			}else{
-		  				layer.msg(data.msg,{icon: 2});
+		  				parent.layer.msg(data.msg,{icon: 2});
 		  			}
+		  			parent.layer.close(index);
 		  		},
 		  		error : function(){
-		  			layer.msg('修改失败', {icon: 2});
+		  			parent.layer.msg('修改失败', {icon: 2});
+		  			parent.layer.close(index);
 		  		}
 		  	})
+		  
+		  	//s可以在这里 parent.table.reload
 		  	return false;
 		});
 		
 		//但是，如果你的HTML是动态生成的，自动渲染就会失效
 		//因此你需要在相应的地方，执行下述方法来手动渲染，跟这类似的还有 element.init();
 		 form.render();
-       
-         
     });
 </script>
 

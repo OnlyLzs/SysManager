@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
-<title>修改用户信息界面</title>
+<title>增加用户信息界面</title>
 <meta name="renderer" content="webkit">
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 <meta name="viewport"
@@ -21,14 +21,22 @@
 </head>
 <body>
 	<div class="lzsCenter">
-		<form class="layui-form" action="" method="post" id="userUpdateForm">
-		<input type="text" hidden="true" th:field="${sysUser.userId}">
+		<form class="layui-form" action="" method="post" id="userAddForm">
 			<div class="layui-form-item">
 				<div class="layui-inline">
 					<label class="layui-form-label">用户名</label>
 					<div class="layui-input-block">
 						<input type="text" lay-verify="required" autocomplete="off"
-							class="layui-input" th:field="${sysUser.userName}">
+							class="layui-input" name="userName">
+					</div>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<div class="layui-inline">
+					<label class="layui-form-label">密码</label>
+					<div class="layui-input-block">
+						<input type="text" lay-verify="required" autocomplete="off"
+							class="layui-input" name="password">
 					</div>
 				</div>
 			</div>
@@ -36,8 +44,8 @@
 				<div class="layui-inline">
 					<label class="layui-form-label">手机</label>
 					<div class="layui-input-block">
-						<input type="tel" lay-verify="required|phone" autocomplete="off"
-							class="layui-input" th:field="${sysUser.mobile}">
+						<input type="tel" lay-verify="required" autocomplete="off"
+							class="layui-input" name="mobile">
 					</div>
 				</div>
 			</div>
@@ -45,8 +53,8 @@
 				<div class="layui-inline">
 					<label class="layui-form-label">邮箱</label>
 					<div class="layui-input-block">
-						<input type="text" lay-verify="email" autocomplete="off"
-							class="layui-input" th:field="${sysUser.email}">
+						<input type="text"  autocomplete="off"
+							class="layui-input" name="email">
 					</div>
 				</div>
 			</div>
@@ -55,7 +63,7 @@
 					<label class="layui-form-label">备注</label>
 					<div class="layui-input-block">
 						<input type="text" autocomplete="off" class="layui-input"
-							th:field="${sysUser.remake}">
+							name="remake">
 					</div>
 				</div>
 			</div>
@@ -63,7 +71,7 @@
 				<div class="layui-inline">
 					<label class="layui-form-label">角色</label>
 					<div class="layui-input-block">
-						<select xm-select="select-roles" xm-select-search="" name="roleIds" id="roleIds"  th:rolesId="${roleIdList}">
+						<select xm-select="select-roles" xm-select-search="" name="roleIds" id="roleIds" >
 						    <option value="">---请选择---</option>
 						    <option th:each="role : ${sysRoles}" th:value="${role.roleId}"
 									th:text="${role.roleName}">option</option>
@@ -75,7 +83,7 @@
 				<label class="layui-form-label">状态</label>
 				<div class="layui-input-block">
 					<input type="checkbox" lay-skin="switch" id="status" name="status" value= "1"
-						lay-text="开启|禁用" th:checked="${sysUser.status} eq 1 ? true:false" >
+						lay-text="开启|禁用" >
 				</div>
 			</div>
 			<div class="layui-form-item">
@@ -102,24 +110,11 @@
     	var form = layui.form; //s只有执行了这一步，部分表单元素才会自动修饰成功
     	var table = layui.table;
     	var formSelects = layui.formSelects;
-    	var data = $("select[id='roleIds']").attr("rolesId");
-    	console.log("角色"+data)
-    	//s截取字符串 【1,2】-》1,2  String类型
-    	var rolesId = data.substring(data.indexOf("[")+1,data.indexOf("]"))
-    	//s分割字符串 变为array类型
-    	var arr = rolesId.split(",")
-    	//s将里面的 String 1,2 转为 int 1,2 
-    	var roleIdList= new Array() 
-    	for (var i=0;i<arr.length;i++){
-    		roleIdList.push(parseInt(arr[i]));
-    	}
-    	//layer.msg(arr+$.type(arr)+roleIdList+$.type(roleIdList)+"----"+parseInt(arr))
-		formSelects.value('select-roles', roleIdList, true); 
     	//s监听提交
 		form.on('submit(submitFilter)', function(data){
 		  	//layer.msg(JSON.stringify(data.field)+"-----"+rolesId+"----------"+$('#userUpdateForm').serialize());
 		  	$.ajax({
-		  		url : "/sys/user/update",
+		  		url : "/sys/user/add",
 		  		dateType : "json",
 		  		type : "post",
 		  		contentType:"application/json",
@@ -133,17 +128,16 @@
 		  			parent.layer.close(index);
 		  		},
 		  		error : function(){
-		  			parent.layer.msg('修改失败', {icon: 2});
+		  			parent.layer.msg('添加失败', {icon: 2});
 		  			parent.layer.close(index);
 		  		}
 		  	})
-		  
 		  	//s可以在这里 parent.table.reload
 		  	return false;
 		});
 		
-		//但是，如果你的HTML是动态生成的，自动渲染就会失效
-		//因此你需要在相应的地方，执行下述方法来手动渲染，跟这类似的还有 element.init();
+		//s但是，如果你的HTML是动态生成的，自动渲染就会失效
+		//s因此你需要在相应的地方，执行下述方法来手动渲染，跟这类似的还有 element.init();
 		 form.render();
     });
 </script>

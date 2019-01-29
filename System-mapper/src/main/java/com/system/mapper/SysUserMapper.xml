@@ -36,7 +36,8 @@
 		#{mobile,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, #{createDate,jdbcType=VARCHAR},
 		#{updateDate,jdbcType=VARCHAR}, #{remake,jdbcType=VARCHAR})
 	</insert>
-	<insert id="insertSelective"
+	<!-- s插入后返回主键 useGeneratedKeys="true" keyProperty="userId" -->
+	<insert id="insertSelective" useGeneratedKeys="true" keyProperty="userId"
 		parameterType="com.system.entity.SysUser">
 		insert into sys_user
 		<trim prefix="(" suffix=")" suffixOverrides=",">
@@ -55,7 +56,10 @@
 			<if test="email != null">
 				email,
 			</if>
-			<if test="createDate != null">
+			<if test="status != null">
+				status,
+			</if>
+			<if test="createDate = null">
 				create_date,
 			</if>
 			<if test="updateDate != null">
@@ -81,8 +85,11 @@
 			<if test="email != null">
 				#{email,jdbcType=VARCHAR},
 			</if>
-			<if test="createDate != null">
-				#{createDate,jdbcType=VARCHAR},
+			<if test="status != null">
+				#{status,jdbcType=INTEGER},
+			</if>
+			<if test="createDate = null">
+				NOW(),
 			</if>
 			<if test="updateDate != null">
 				#{updateDate,jdbcType=VARCHAR},
@@ -113,6 +120,9 @@
 			</if>
 			<if test="status != null">
 				status = #{status,jdbcType=INTEGER},
+			</if>
+			<if test="status == null">
+				status = 0,
 			</if>
 			<if test="createDate != null">
 				create_date = #{createDate,jdbcType=VARCHAR},
@@ -166,4 +176,14 @@
 			</if>
 		</where>
 	</select>
+	
+	<!-- s根据ids 删除用户信息 -->
+	<delete id="deleteUserByIds" parameterType="java.util.List">
+		delete from sys_user 
+		where user_id in
+		<foreach collection="ids" item="itemId" open="(" close=")" separator="," index="index">
+			#{itemId}
+		</foreach>
+		
+	</delete>
 </mapper>

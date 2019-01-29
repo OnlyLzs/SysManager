@@ -1,5 +1,7 @@
 package com.system.service.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,10 +16,15 @@ public class SysUserRoleServiceImpl implements SysUserRoleService {
 	@Override
 	public void saveOrUpdate(Integer userId, String roleIds) {
 		sysUserRoleMapper.deleteByUserId(userId);
-		if(roleIds!=null && roleIds.trim()!="") {
+		if(roleIds!=null && !roleIds.trim().equals("")) {
 			String[] roleIdArray = roleIds.split(",");
 			sysUserRoleMapper.save(userId, roleIdArray);
 		}
+	}
+
+	@Override
+	public void deleteRoleByUserIds(List<Integer> ids) {
+		sysUserRoleMapper.deleteRoleByUserIds(ids);
 	}
 
 	

@@ -46,7 +46,7 @@
   </div>
 </script>
 <script type="text/html" id="bar_user">
-  <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+  <a shiro:hasPermission="sys:user:edit" class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
   <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
 </script>
 <script type="text/html" id="statusTemplet">
@@ -59,7 +59,7 @@
               
 <script type="text/javascript" th:src="@{/js/jquery-3.3.1.min.js}"></script>          
 <script src="layui/layui.js" th:src="@{/layui/layui.js}" charset="utf-8"></script>
-<!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 --> 
+<!-- s注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 --> 
  
 <script>
 layui.use(['table','layer'], function(){
@@ -70,8 +70,8 @@ layui.use(['table','layer'], function(){
     ,url:'/sys/user/queryUserByCondition'
    	,height: 'full-200'
    	,request: {
-   	    pageName: 'pageNum' //页码的参数名称，默认：page
-   	    ,limitName: 'pageSize' //每页数据量的参数名，默认：limit
+   	    pageName: 'pageNum' //s页码的参数名称，默认：page
+   	    ,limitName: 'pageSize' //s每页数据量的参数名，默认：limit
    	  }
     ,toolbar: '#toolbar_user'
     ,title: '用户数据表'
@@ -95,19 +95,37 @@ layui.use(['table','layer'], function(){
     ]
     ,page: true
     ,response: {
-        statusCode: 200 //重新规定成功的状态码为 200，table 组件默认为 0
+        statusCode: 200 //s重新规定成功的状态码为 200，table 组件默认为 0
       }
-	,parseData: function(res){ //将原始数据解析成 table 组件所规定的数据
+	,parseData: function(res){ //s将原始数据解析成 table 组件所规定的数据
 	  return {
-	    "code": res.status, //解析接口状态
-	    "msg": res.msg, //解析提示文本
-	    "count": res.data.total, //解析数据长度
-	    "data": res.data.list //解析数据列表
+	    "code": res.status, //s解析接口状态
+	    "msg": res.msg, //s解析提示文本
+	    "count": res.data.total, //s解析数据长度
+	    "data": res.data.list //s解析数据列表
 	  };
 	}
 	,id:'tableUserReload'
   });
-//监听事件
+  //s监听表格工具条
+  table.on('tool(table_user_filter)', function(obj){
+    var data = obj.data;
+    if(obj.event === 'detail'){
+      layer.msg('ID：'+ data.id + ' 的查看操作');
+    } else if(obj.event === 'del'){
+      layer.confirm('真的删除行么', function(index){
+    	  var list= new Array();
+        	list.push(data.userId);
+        	batchDeleteUser(list)
+      });
+    } else if(obj.event === 'edit'){
+      //layer.alert('编辑行：<br>'+ JSON.stringify(data))
+      	var list= new Array();
+      	list.push(data)
+    	editUser(list);
+    }
+  });
+  //s监听头部工具栏事件事件
   table.on('toolbar(table_user_filter)', function(obj){
 	//var checkStatus = table.checkStatus(obj.config.id);
 	var checkStatus = table.checkStatus('tableUserReload');
@@ -118,7 +136,7 @@ layui.use(['table','layer'], function(){
 	});
     switch(obj.event){
 		case 'add':
-	        layer.alert(JSON.stringify(data));
+			addUser();
 		break;
 		case 'update':
 		  if(data.length === 0){
@@ -126,6 +144,7 @@ layui.use(['table','layer'], function(){
 		  } else if(data.length > 1){
 		    layer.msg('只能同时编辑一个');
 		  } else {
+			console.log(data)
 		    editUser(data);
 		  }
 		break;
@@ -133,7 +152,9 @@ layui.use(['table','layer'], function(){
 		  if(data.length === 0){
 		    layer.msg('请选择一行');
 		  } else {
-		    batchDeleteUser(deleteList);
+			  layer.confirm('真的删除这'+data.length+'条数据么', function(){
+				  batchDeleteUser(deleteList);
+			  })
 		  }
 		break;
     };
@@ -159,6 +180,11 @@ layui.use(['table','layer'], function(){
 			});
 		}
 	};
+	//s刷新当前页
+	function refresh(){
+		//s刷新当前页
+        $(".layui-laypage-btn").click();
+	}
 	//s监听搜索按钮的事件
 	$('.tableSearch .layui-btn').on('click', function(){
 	    var type = $(this).data('type');
@@ -166,9 +192,30 @@ layui.use(['table','layer'], function(){
 	  });
 	
 	function batchDeleteUser(deleteList){
-		layer.msg(JSON.stringify(deleteList)+"----"+deleteList)
+		//layer.msg(JSON.stringify(deleteList)+"----"+$.type(JSON.stringify(deleteList))+"----"+deleteList+"----"+$.type(deleteList))
+		$.ajax({
+			url : "/sys/user/delete",
+			type : "get",
+			//contentType : "application/json",
+			dataType : "json",
+			data : {ids : deleteList},
+			success : function(data){
+				if(data.status==200){
+	  				layer.msg(data.msg,{icon: 1});
+	  			}else{
+	  				layer.msg(data.msg,{icon: 2});
+	  			}
+				$(".layui-laypage-btn").click();
+			},
+			error : function(){
+				layer.msg(data.msg,{icon: 2});
+				$(".layui-laypage-btn").click();
+			}
+		})
+		
 	}
 	function editUser(data){
+		console.log(data)
 		var id = data[0].userId;
 		var url = "/sys/user/edit";
 	    if (id != null) {
@@ -177,14 +224,36 @@ layui.use(['table','layer'], function(){
 	            title: '修改',
 	            shadeClose: false,
 	            shade: [0.3, '#000'],
-	            maxmin: true, //开启最大化最小化按钮
+	            maxmin: true, //s开启最大化最小化按钮
 	            area: ['893px', '600px'],
-	            content: url + "/" + id
+	            content: url + "/" + id,
+	            end: function(){
+	            	//table.reload();
+	            	//s刷新当前页
+	                $(".layui-laypage-btn").click();
+	            }
 	        });
 	    }
 	}
-	
-
+	function addUser(data) {
+		var url = "/sys/user/add"
+		layer.open({
+			type : 2,
+			title : '添加用户信息',
+			anim : 2, //s弹出动画
+			shadeClose : false, //s开启遮罩关闭
+			area : [ '893px', '600px' ],
+			shade : [ 0.3, '#000' ],
+			maxmin : true, //s开启最大化最小化按钮
+			area : [ '893px', '600px' ],
+			content : url ,
+			end : function() {
+				//table.reload();
+				//s刷新当前页
+				$(".layui-laypage-btn").click();
+			}
+		});
+	}
 });
 </script>
 

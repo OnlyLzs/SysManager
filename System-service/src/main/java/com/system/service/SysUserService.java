@@ -46,13 +46,31 @@ public interface SysUserService {
 	SysUser queryById(Integer id);
 
 	/**
-	 * @Description 修改用户信息 包含权限
+	 * @Description 修改用户信息 包含角色
 	 * @author Jason
 	 * @date Jan 28, 2019
 	 * @param str
 	 * @return
 	 */
 	StatusResult updateUser(String str);
+
+	/**
+	 * @Description 根据Id删除用户
+	 * @author Jason
+	 * @date Jan 29, 2019
+	 * @param ids
+	 * @return
+	 */
+	StatusResult deleteUser(List<Integer> ids);
+
+	/**
+	 * @Description 添加用户信息
+	 * @author Jason
+	 * @date Jan 29, 2019
+	 * @param userInfo
+	 * @return
+	 */
+	StatusResult saveUser(String userInfo);
 
 	
 

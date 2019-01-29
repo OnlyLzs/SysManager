@@ -40,4 +40,13 @@ public interface SysUserMapper {
 	 * @return
 	 */
 	List<SysUser> queryUserByCondition(@Param("sysUser")SysUser sysUser, @Param("condition")String condition);
+
+	/**
+	 * @Description 根据ids删除用户
+	 * @author Jason
+	 * @date Jan 29, 2019
+	 * @param ids
+	 * @return
+	 */
+	int deleteUserByIds(@Param("ids")List<Integer> ids);
 }
