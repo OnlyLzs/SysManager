@@ -24,4 +24,13 @@ public interface SysResourceMapper {
 	List<SysResource> queryByUserId(Integer userId);
 
 	List<SysResource> queryMenuByUserId(Integer userId);
+
+	/**
+	 * @Description 查询所有权限  递归 树形
+	 * @author Jason
+	 * @date Jan 30, 2019
+	 * @param parentId
+	 * @return
+	 */
+	List<SysResource> queryAll(Integer parentId);
 }

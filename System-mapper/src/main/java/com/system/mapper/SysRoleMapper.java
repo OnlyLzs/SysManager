@@ -2,8 +2,11 @@ package com.system.mapper;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Mapper;
+
 import com.system.entity.SysRole;
 
+@Mapper
 public interface SysRoleMapper {
     int deleteByPrimaryKey(Integer roleId);
 
@@ -20,4 +23,6 @@ public interface SysRoleMapper {
 	List<SysRole> queryAll();
 
 	List<SysRole> queryByUserId(Integer userId);
+
+	List<SysRole> queryByCondition(String condition);
 }

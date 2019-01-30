@@ -12,7 +12,7 @@
 	  <result column="create_date" jdbcType="VARCHAR" property="createDate" />
 	  <result column="update_date" jdbcType="VARCHAR" property="updateDate" />
 	</resultMap>
-	<!-- 子菜单查询封装 -->
+	<!-- s子菜单查询封装 -->
 	<resultMap id="ChildrenResultMap" type="com.system.entity.SysResource" extends="BaseResultMap">
 		<collection property="childrenResources" javaType="List" ofType="com.system.entity.SysResource" select="selectResourceByParentId" column="resource_id"></collection>
 	</resultMap>
@@ -21,6 +21,24 @@
 		select * FROM sys_resource sr
 		where sr.parent_id = #{resourceId}
 	</select>
+	<!-- s树形菜单 -->
+	<resultMap id="BaseResultTreeMap" type="com.system.entity.SysResource">
+	  <id column="resource_id" jdbcType="INTEGER" property="resourceId" />
+	  <result column="resource_name" jdbcType="VARCHAR" property="resourceName" />
+	  <result column="permission" jdbcType="VARCHAR" property="permission" />
+	  <result column="url" jdbcType="VARCHAR" property="url" />
+	  <result column="parent_id" jdbcType="INTEGER" property="parentId" />
+	  <result column="type" jdbcType="VARCHAR" property="type" />
+	  <result column="description" jdbcType="VARCHAR" property="description" />
+	  <result column="create_date" jdbcType="VARCHAR" property="createDate" />
+	  <result column="update_date" jdbcType="VARCHAR" property="updateDate" />
+	  <!--s查到的cildrenId作为下次的parentId-->
+	  <collection property="childrenResources" javaType="List" ofType="com.system.entity.SysResource" select="queryAll" column="resource_id"></collection>
+	</resultMap>
+	<!-- s递归查询所有菜单 -->
+	<select id="queryAll" parameterType="java.lang.Integer" resultMap="BaseResultTreeMap">
+		select * from sys_resource where parent_id = #{parentId}
+	</select>	
 	
 	<sql id="Base_Column_List">
 		resource_id, resource_name, permission, url, parent_id, type, description,

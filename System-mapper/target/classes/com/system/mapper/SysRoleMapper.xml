@@ -99,4 +99,13 @@
   <select id="queryByUserId" parameterType="java.lang.Integer" resultMap="BaseResultMap" >
   	select sr.* FROM sys_role sr LEFT JOIN sys_user_role sur ON sr.role_id = sur.role_id LEFT JOIN sys_user su ON su.user_id = sur.user_id WHERE su.user_id = #{userId,jdbcType=INTEGER}
   </select>
+  <!-- s根据条件查询角色 -->
+  <select id="queryByCondition" parameterType="java.lang.String" resultMap="BaseResultMap">
+  	select * from sys_role
+  	<where>
+  		<if test="condition!=null and condition !=''">
+  			and concat_ws('',role_name,description) like "%"#{condition}"%"
+  		</if>
+  	</where>
+  </select>
 </mapper>

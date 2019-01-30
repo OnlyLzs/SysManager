@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+	xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+  <meta charset="utf-8">
+  <title>layui</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="stylesheet" href="layui/css/layui.css" th:href="@{/layui/css/layui.css}" media="all">
+</head>
+<body>
+	<div class="tableSearch layui-form">
+		用户姓名：
+		<div class="layui-inline">
+			<input class="layui-input" name="id" id="name" autocomplete="off">
+		</div>
+		用户电话：
+		<div class="layui-inline">
+			<input class="layui-input" name="id" id="mobile" autocomplete="off">
+		</div>
+		用户状态：
+		<div class="layui-inline">
+			<select name="id" id="status">
+				<option value="">请选择</option>
+				<option value="1">正常</option>
+				<option value="0">禁封</option>
+			</select>
+		</div>
+		邮箱或备注：
+		<div class="layui-input-inline">
+			<input class="layui-input" name="id" id="other" autocomplete="off">
+		</div>
+		<button class="layui-btn" data-type="searchBtn">搜索</button>
+	</div>
+
+	<table class="layui-hide" id="table_role" lay-filter="table_role_filter"></table>
+ 
+<script type="text/html" id="toolbar_user">
+  <div class="layui-btn-container">
+    <button shiro:hasPermission="sys:user:add" class="layui-btn layui-btn-sm" lay-event="add"><i class="layui-icon layui-icon-add-1"></i></button> 
+    <button class="layui-btn layui-btn-sm" lay-event="update"><i class="layui-icon layui-icon-edit"></i></button>
+	<button class="layui-btn layui-btn-sm" lay-event="delete"><i class="layui-icon layui-icon-delete"></i></button>
+  </div>
+</script>
+<script type="text/html" id="bar_user">
+  <a shiro:hasPermission="sys:user:edit" class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+<script type="text/html" id="statusTemplet">
+  {{#  if(d.status == 1){ }}
+     <input type="checkbox" name="lock" value="{{d.status}}" title="正常" lay-filter="lockDemo" checked>
+  {{#  } else { }}
+    <input type="checkbox" name="lock" value="{{d.status}}" title="正常" lay-filter="lockDemo" >
+  {{#  } }}
+</script>
+              
+<script type="text/javascript" th:src="@{/js/jquery-3.3.1.min.js}"></script>          
+<script src="layui/layui.js" th:src="@{/layui/layui.js}" charset="utf-8"></script>
+<!-- s注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 --> 
+ 
+<script>
+layui.use(['table','layer'], function(){
+  var table = layui.table;
+  var layer = layui.layer;
+  table.render({
+    elem: '#table_role'
+    ,url:'/sys/role/queryRoleByCondition'
+   	,height: 'full-200'
+   	,request: {
+   	    pageName: 'pageNum' //s页码的参数名称，默认：page
+   	    ,limitName: 'pageSize' //s每页数据量的参数名，默认：limit
+   	  }
+    ,toolbar: '#toolbar_user'
+    ,title: '用户数据表'
+    ,totalRow: true
+    ,cols: [
+    	[
+      {type: 'checkbox', fixed: 'left'}
+      ,{field:'roleId', title:'ID', fixed: 'left', unresize: true, sort: true}
+      ,{field:'roleName', title:'角色名', edit: 'text'}
+      ,{field:'description', title:'描述', sort: true, totalRow: true}
+      ,{field:'createDate', title:'创建时间'}
+      ,{field:'updateDate', title:'修改时间'}
+      ,{fixed: 'right', title:'操作', toolbar: '#bar_user'}
+    	]
+    ]
+    ,page: true
+    ,response: {
+        statusCode: 200 //s重新规定成功的状态码为 200，table 组件默认为 0
+      }
+	,parseData: function(res){ //s将原始数据解析成 table 组件所规定的数据
+	  return {
+	    "code": res.status, //s解析接口状态
+	    "msg": res.msg, //s解析提示文本
+	    "count": res.data.total, //s解析数据长度
+	    "data": res.data.list //s解析数据列表
+	  };
+	}
+	,id:'tableRoleReload'
+  });
+  //s监听表格工具条
+  table.on('tool(table_role_filter)', function(obj){
+    var data = obj.data;
+    if(obj.event === 'detail'){
+      layer.msg('ID：'+ data.id + ' 的查看操作');
+    } else if(obj.event === 'del'){
+      layer.confirm('真的删除行么', function(index){
+    	  var list= new Array();
+        	list.push(data.userId);
+        	batchDeleteUser(list)
+      });
+    } else if(obj.event === 'edit'){
+      //layer.alert('编辑行：<br>'+ JSON.stringify(data))
+      	var list= new Array();
+      	list.push(data)
+    	editUser(list);
+    }
+  });
+  //s监听头部工具栏事件事件
+  table.on('toolbar(table_role_filter)', function(obj){
+	//var checkStatus = table.checkStatus(obj.config.id);
+	var checkStatus = table.checkStatus('tableRoleReload');
+	var data = checkStatus.data
+	,deleteList=[];
+	data.forEach(function(n,i){
+		deleteList.push(n.userId);
+	});
+    switch(obj.event){
+		case 'add':
+			addUser();
+		break;
+		case 'update':
+		  if(data.length === 0){
+		    layer.msg('请选择一行');
+		  } else if(data.length > 1){
+		    layer.msg('只能同时编辑一个');
+		  } else {
+			console.log(data)
+		    editUser(data);
+		  }
+		break;
+		case 'delete':
+		  if(data.length === 0){
+		    layer.msg('请选择一行');
+		  } else {
+			  layer.confirm('真的删除这'+data.length+'条数据么', function(){
+				  batchDeleteUser(deleteList);
+			  })
+		  }
+		break;
+    };
+  });
+	
+	var $ = layui.$, active = {
+		searchBtn : function() {
+			var name = $('#name');
+			var mobile = $('#mobile');
+			var status = $('#status');
+			var other = $('#other');
+			//执行重载
+			table.reload('tableRoleReload', {
+				page : {
+					curr : 1//重新从第 1 页开始
+				},
+				where : {
+					userName : name.val(),
+					mobile : mobile.val(),
+					status : status.val(),
+					condition : other.val()
+				}
+			});
+		}
+	};
+	//s刷新当前页
+	function refresh(){
+		//s刷新当前页
+        $(".layui-laypage-btn").click();
+	}
+	//s监听搜索按钮的事件
+	$('.tableSearch .layui-btn').on('click', function(){
+	    var type = $(this).data('type');
+	    active[type] ? active[type].call(this) : '';
+	  });
+	
+	function batchDeleteUser(deleteList){
+		//layer.msg(JSON.stringify(deleteList)+"----"+$.type(JSON.stringify(deleteList))+"----"+deleteList+"----"+$.type(deleteList))
+		$.ajax({
+			url : "/sys/user/delete",
+			type : "get",
+			//contentType : "application/json",
+			dataType : "json",
+			data : {ids : deleteList},
+			success : function(data){
+				if(data.status==200){
+	  				layer.msg(data.msg,{icon: 1});
+	  			}else{
+	  				layer.msg(data.msg,{icon: 2});
+	  			}
+				$(".layui-laypage-btn").click();
+			},
+			error : function(){
+				layer.msg(data.msg,{icon: 2});
+				$(".layui-laypage-btn").click();
+			}
+		})
+		
+	}
+	function editUser(data){
+		console.log(data)
+		var id = data[0].userId;
+		var url = "/sys/user/edit";
+	    if (id != null) {
+	        layer.open({
+	            type: 2,
+	            title: '修改',
+	            shadeClose: false,
+	            shade: [0.3, '#000'],
+	            maxmin: true, //s开启最大化最小化按钮
+	            area: ['893px', '600px'],
+	            content: url + "/" + id,
+	            end: function(){
+	            	//table.reload();
+	            	//s刷新当前页
+	                $(".layui-laypage-btn").click();
+	            }
+	        });
+	    }
+	}
+	function addUser(data) {
+		var url = "/sys/role/add"
+		layer.open({
+			type : 2,
+			title : '添加用户信息',
+			anim : 2, //s弹出动画
+			shadeClose : false, //s开启遮罩关闭
+			area : [ '893px', '600px' ],
+			shade : [ 0.3, '#000' ],
+			maxmin : true, //s开启最大化最小化按钮
+			area : [ '893px', '600px' ],
+			content : url ,
+			end : function() {
+				//table.reload();
+				//s刷新当前页
+				$(".layui-laypage-btn").click();
+			}
+		});
+	}
+});
+</script>
+
+</body>
+</html>

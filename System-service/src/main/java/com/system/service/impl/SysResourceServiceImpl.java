@@ -27,4 +27,10 @@ public class SysResourceServiceImpl implements SysResourceService {
 		return sysResourceMapper.queryMenuByUserId(userId);
 	}
 
+	@Override
+	public List<SysResource> queryAll() {
+		
+		return sysResourceMapper.queryAll(0);
+	}
+
 }

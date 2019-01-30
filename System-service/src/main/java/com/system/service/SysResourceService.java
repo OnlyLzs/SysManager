@@ -32,4 +32,12 @@ public interface SysResourceService {
 	 */
 	List<SysResource> queryMenuByUserId(Integer userId);
 
+	/**
+	 * @Description 查询所有权限（递归  树形结构）
+	 * @author Jason
+	 * @date Jan 30, 2019
+	 * @return
+	 */
+	List<SysResource> queryAll();
+
 }
