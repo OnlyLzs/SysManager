@@ -28,9 +28,15 @@ public class SysResourceServiceImpl implements SysResourceService {
 	}
 
 	@Override
-	public List<SysResource> queryAll() {
+	public List<SysResource> queryAllTree() {
 		
-		return sysResourceMapper.queryAll(0);
+		return sysResourceMapper.queryAllTree(0);
+	}
+
+	@Override
+	public List<SysResource> queryAll() {
+		// TODO Auto-generated method stub
+		return sysResourceMapper.queryAll();
 	}
 
 }

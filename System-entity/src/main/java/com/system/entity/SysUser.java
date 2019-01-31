@@ -29,4 +29,5 @@ public class SysUser {
     private List<SysRole> roles;
     
     //private String roleIds;
+    //private List<Integer> testIds;
 }

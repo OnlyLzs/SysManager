@@ -35,6 +35,15 @@ public interface SysRoleService {
 	 */
 	StatusResult queryRoleByCondition(Integer pageNum, Integer pageSize, String condition);
 
+	/**
+	 * @Description 添加角色信息
+	 * @author Jason
+	 * @date Jan 31, 2019
+	 * @param sysRole
+	 * @return
+	 */
+	StatusResult saveRole(SysRole sysRole);
+
 	
 
 }

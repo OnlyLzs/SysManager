@@ -68,7 +68,7 @@ layui.use(['table','layer'], function(){
   table.render({
     elem: '#table_role'
     ,url:'/sys/role/queryRoleByCondition'
-   	,height: 'full-200'
+   	//,height: 'full-200'
    	,request: {
    	    pageName: 'pageNum' //s页码的参数名称，默认：page
    	    ,limitName: 'pageSize' //s每页数据量的参数名，默认：limit
@@ -236,10 +236,9 @@ layui.use(['table','layer'], function(){
 			title : '添加用户信息',
 			anim : 2, //s弹出动画
 			shadeClose : false, //s开启遮罩关闭
-			area : [ '893px', '600px' ],
+			area : [ '500px', '700px' ],
 			shade : [ 0.3, '#000' ],
 			maxmin : true, //s开启最大化最小化按钮
-			area : [ '893px', '600px' ],
 			content : url ,
 			end : function() {
 				//table.reload();

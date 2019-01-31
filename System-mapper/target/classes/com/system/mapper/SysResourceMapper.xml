@@ -36,7 +36,7 @@
 	  <collection property="childrenResources" javaType="List" ofType="com.system.entity.SysResource" select="queryAll" column="resource_id"></collection>
 	</resultMap>
 	<!-- s递归查询所有菜单 -->
-	<select id="queryAll" parameterType="java.lang.Integer" resultMap="BaseResultTreeMap">
+	<select id="queryAllTree" parameterType="java.lang.Integer" resultMap="BaseResultTreeMap">
 		select * from sys_resource where parent_id = #{parentId}
 	</select>	
 	
@@ -202,6 +202,10 @@
 		LEFT JOIN sys_user su ON su.user_id = sur.user_id
 		WHERE
 		su.user_id = #{userId} and sr.type = '0'
+	</select>
+	
+	<select id="queryAll" resultMap="BaseResultMap">
+		select * from sys_resource;
 	</select>
 	
 </mapper>

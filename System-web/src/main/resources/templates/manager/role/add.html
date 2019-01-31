@@ -5,13 +5,13 @@
 <title>增加用户信息界面</title>
 <meta name="renderer" content="webkit">
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-<meta name="viewport"
-	content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <link rel="stylesheet" href="layui/css/layui.css" th:href="@{/layui/css/layui.css}" media="all">
 <link rel="stylesheet" href="layui/plugs/formSelects/formSelects-v4.css" th:href="@{/layui/plugs/formSelects/formSelects-v4.css}">
-<script type="text/javascript" th:src="@{/js/jquery-3.3.1.min.js}"></script>
-<script src="layui/layui.js" th:src="@{/layui/layui.js}" charset="utf-8"></script>
-<!-- <script type="text/javascript" src="layui/plugs/formSelects/formSelects-v4.js" th:src="@{/layui/plugs/formSelects/formSelects-v4.js}"></script> -->
+<link rel="stylesheet" href="plugs/ztree/metroStyle/metroStyle.css" th:href="@{/plugs/ztree/metroStyle/metroStyle.css}">
+<script type="text/javascript" src="js/jquery-3.3.1.min.js" th:src="@{/js/jquery-3.3.1.min.js}"></script>
+<script type="text/javascript" src="layui/layui.js" th:src="@{/layui/layui.js}" charset="utf-8"></script>
+<script type="text/javascript" src="plugs/ztree/jquery.ztree.all.min.js" th:src="@{/plugs/ztree/jquery.ztree.all.min.js}"></script>
 <style type="text/css">
 .lzsCenter {
 	width: 300px;
@@ -21,7 +21,7 @@
 </head>
 <body>
 	<div class="lzsCenter">
-		<form class="layui-form" action="" method="post" id="userAddForm">
+		<form class="layui-form" action="" method="post" id="roleAddForm">
 			<div class="layui-form-item">
 				<div class="layui-inline">
 					<label class="layui-form-label">角色名</label>
@@ -41,13 +41,10 @@
 				</div>
 			</div>
 			<div class="layui-form-item">
-				<div class="layui-inline">
-					<label class="layui-form-label">权限</label>
-					<div class="layui-input-block">
-						<input type="tel" lay-verify="required" autocomplete="off"
-							class="layui-input" name="mobile">
-					</div>
-				</div>
+				<label class="layui-form-label">授权<span class="label_span">:</span></label>
+	           	<div class="layui-input-block">
+	            	<ul id="menuTree" class="ztree" ></ul>
+	            </div>
 			</div>
 			<div class="layui-form-item">
 				<div class="layui-input-block">
@@ -59,50 +56,97 @@
 	</div>
 	
 <script type="text/javascript">
-    //s全局定义一次, 加载formSelects
-    layui.config({
-        base: '/layui/plugs/formSelects/' //s此处路径请自行处理, 可以使用绝对路径
-    }).extend({
-        formSelects: 'formSelects-v4'
-    });
-    //s加载模块
-    layui.use(['form', 'formSelects', 'layer', 'table'], function(){
-    	
-    	//s注意：parent 是 JS 自带的全局对象，可用于操作父页面
-    	var index = parent.layer.getFrameIndex(window.name); //s获取窗口索引
-    	var form = layui.form; //s只有执行了这一步，部分表单元素才会自动修饰成功
-    	var table = layui.table;
-    	var formSelects = layui.formSelects;
-    	//s监听提交
-		form.on('submit(submitFilter)', function(data){
-		  	//layer.msg(JSON.stringify(data.field)+"-----"+rolesId+"----------"+$('#userUpdateForm').serialize());
-		  	$.ajax({
-		  		url : "/sys/user/add",
-		  		dateType : "json",
-		  		type : "post",
-		  		contentType:"application/json",
-		  		data : JSON.stringify(data.field), 
-		  		success : function(data) {
-		  			if(data.status==200){
-		  				parent.layer.msg(data.msg,{icon: 1});
-		  			}else{
-		  				parent.layer.msg(data.msg,{icon: 2});
-		  			}
-		  			parent.layer.close(index);
-		  		},
-		  		error : function(){
-		  			parent.layer.msg('添加失败', {icon: 2});
-		  			parent.layer.close(index);
-		  		}
-		  	})
-		  	//s可以在这里 parent.table.reload
-		  	return false;
+	//s加载模块
+	layui.use([ 'form', 'layer' ], function() {
+		//s注意：parent 是 JS 自带的全局对象，可用于操作父页面
+		var index = parent.layer.getFrameIndex(window.name); //s获取窗口索引
+		var form = layui.form; //s只有执行了这一步，部分表单元素才会自动修饰成功
+		var table = layui.table;
+		var ztree;
+		//s监听提交
+		form.on('submit(submitFilter)', function(data) {
+			var nodes = ztree.getCheckedNodes(true);
+            var resourceIds = new Array();
+            for (var i = 0; i < nodes.length; i++) {
+            	resourceIds.push(nodes[i].id);
+            }
+          //向form表单中添加选中的菜单
+            data.field.resourceIds = resourceIds;
+            $.ajax({
+				url : "/sys/role/add",
+				dateType : "json",
+				type : "post",
+				contentType : "application/json",
+				data : JSON.stringify(data.field),
+				success : function(data) {
+					if (data.status == 200) {
+						parent.layer.msg(data.msg, {
+							icon : 1
+						});
+					} else {
+						parent.layer.msg(data.msg, {
+							icon : 2
+						});
+					}
+					parent.layer.close(index);
+				},
+				error : function() {
+					parent.layer.msg('添加失败', {
+						icon : 2
+					});
+					parent.layer.close(index);
+				}
+			})
+			//s可以在这里 parent.table.reload
+			return false;
 		});
-		
+		/*下拉树*/
+		var setting = {
+			data : {
+				simpleData : {
+					enable : true,
+					idKey : "id",
+					pIdKey : "pId",
+					rootPId : 0
+				},
+				key : {
+					url : "nourl"
+				}
+			},
+			check : {
+				enable : true,
+				nocheckInherit : true
+			},
+			view : {
+				showTitle : true
+			}
+		};
+		/*ajax 后台查询resource*/
+		$.ajax({
+			url : "/sys/resource/queryAll",
+			type :"get",
+			dataType: "json",
+			success : function (data) {
+				if (data.status==200){
+					 ztree = $.fn.zTree.init($("#menuTree"), setting, data.data);
+					//展开所有节点
+		             ztree.expandAll(true);
+				}else{
+					layer.msg('查询系统资源菜单失败', {
+						icon : 2
+					});
+				}
+			},
+			error : function(){
+				layer.msg('查询系统资源菜单失败', {
+					icon : 2
+				});
+			}
+		})
 		//s但是，如果你的HTML是动态生成的，自动渲染就会失效
 		//s因此你需要在相应的地方，执行下述方法来手动渲染，跟这类似的还有 element.init();
-		 form.render();
-    });
+		form.render();
+	});
 </script>
 
 </body>

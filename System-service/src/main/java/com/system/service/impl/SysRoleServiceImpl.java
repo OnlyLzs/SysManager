@@ -4,14 +4,18 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
+import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.system.entity.SysRole;
 import com.system.mapper.SysRoleMapper;
 import com.system.response.ResponseStatusMsg;
 import com.system.response.StatusResult;
+import com.system.service.SysResourceService;
+import com.system.service.SysRoleResourceService;
 import com.system.service.SysRoleService;
 
 @Service
@@ -19,6 +23,9 @@ public class SysRoleServiceImpl implements SysRoleService {
 
 	@Autowired
 	SysRoleMapper sysRoleMapper;
+
+	@Autowired
+	SysRoleResourceService sysRoleResourceService;
 	
 	@Override
 	public List<SysRole> queryAll() {
@@ -40,6 +47,18 @@ public class SysRoleServiceImpl implements SysRoleService {
 			return StatusResult.ok(ResponseStatusMsg.FIND_SUCCESS.getMsg(), pageInfo);
 		}
 		return StatusResult.ok(ResponseStatusMsg.FIND_NONE.getMsg());
+	}
+
+	@Override
+	@Transactional
+	public StatusResult saveRole(SysRole sysRole) {
+		
+		int result = sysRoleMapper.insertSelective(sysRole);
+		sysRoleResourceService.saveOrUpdate(sysRole.getRoleId(), sysRole.getResourceIds());
+		if (result>0) {
+			return StatusResult.ok(ResponseStatusMsg.ADD_SUCCESS.getMsg());
+		}
+		return StatusResult.error(ResponseStatusMsg.ADD_SUCCESS.getMsg());
 	}
 
 }

@@ -38,6 +38,17 @@ public interface SysResourceService {
 	 * @date Jan 30, 2019
 	 * @return
 	 */
+	List<SysResource> queryAllTree();
+
+	
+	/**
+	 * @Description 查询所有权限
+	 * @author Jason
+	 * @date Jan 31, 2019
+	 * @return
+	 */
 	List<SysResource> queryAll();
+
+	
 
 }

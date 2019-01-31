@@ -120,6 +120,8 @@ public class SysUserController {
 		return mv;
 	}
 	
+	
+	//方案一  字符串接收 然后转json （方案二 见addRole)
 	@ResponseBody
 	@PostMapping("/add")
 	public StatusResult addUser(@RequestBody String userInfo) {

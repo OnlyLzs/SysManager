@@ -32,5 +32,14 @@ public interface SysResourceMapper {
 	 * @param parentId
 	 * @return
 	 */
-	List<SysResource> queryAll(Integer parentId);
+	List<SysResource> queryAllTree(Integer parentId);
+
+	
+	/**
+	 * @Description 查询所有权限
+	 * @author Jason
+	 * @date Jan 31, 2019
+	 * @return
+	 */
+	List<SysResource> queryAll();
 }

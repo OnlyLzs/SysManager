@@ -28,4 +28,24 @@
       </if>
     </trim>
   </insert>
+  
+  <!-- 根据角色Id删除对应权限 -->
+  <delete id="deleteByRoleId" parameterType="java.lang.Integer">
+  	delete from sys_role_resource where role_id = #{roleId}
+  </delete>
+  <!-- 保存角色的权限 -->
+  <select id="save">
+  	insert into sys_role_resource
+	  	(
+	  		role_id,
+	  		resource_id
+	  	) 
+	  	values
+  	<foreach collection="resourceIdArray" item="resourceId" index="index" separator="," >
+		(
+			#{roleId,jdbcType=INTEGER}, 
+			#{resourceId}
+		)
+	</foreach>
+  </select>
 </mapper>
