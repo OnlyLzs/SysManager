@@ -166,9 +166,22 @@
 		    <artifactId>fastjson</artifactId>
 		    <version>1.2.47</version>
 		</dependency>
-		
+		<!-- s个推 -->
+		<dependency>
+			<groupId>com.gexin.platform</groupId>
+			<artifactId>gexin-rp-sdk-http</artifactId>
+			<version>4.1.0.1</version>
+		</dependency>
 	</dependencies>
-
+	
+	<!-- s个推仓库 -->
+	<repositories>
+		<repository>
+			<id>getui-nexus</id>
+			<url>http://mvn.gt.igexin.com/nexus/content/repositories/releases/</url>
+		</repository>
+	</repositories>
+	
 	<!-- <build>
 		<plugins>
 			<plugin>

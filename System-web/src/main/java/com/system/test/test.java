@@ -1,4 +1,4 @@
-package com.system.controller;
+package com.system.test;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;

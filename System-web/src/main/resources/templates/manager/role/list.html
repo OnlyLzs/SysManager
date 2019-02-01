@@ -13,25 +13,9 @@
 </head>
 <body>
 	<div class="tableSearch layui-form">
-		用户姓名：
-		<div class="layui-inline">
-			<input class="layui-input" name="id" id="name" autocomplete="off">
-		</div>
-		用户电话：
-		<div class="layui-inline">
-			<input class="layui-input" name="id" id="mobile" autocomplete="off">
-		</div>
-		用户状态：
-		<div class="layui-inline">
-			<select name="id" id="status">
-				<option value="">请选择</option>
-				<option value="1">正常</option>
-				<option value="0">禁封</option>
-			</select>
-		</div>
-		邮箱或备注：
+		搜索条件:
 		<div class="layui-input-inline">
-			<input class="layui-input" name="id" id="other" autocomplete="off">
+			<input class="layui-input" name="condition" id="condition" autocomplete="off">
 		</div>
 		<button class="layui-btn" data-type="searchBtn">搜索</button>
 	</div>
@@ -43,6 +27,7 @@
     <button shiro:hasPermission="sys:user:add" class="layui-btn layui-btn-sm" lay-event="add"><i class="layui-icon layui-icon-add-1"></i></button> 
     <button class="layui-btn layui-btn-sm" lay-event="update"><i class="layui-icon layui-icon-edit"></i></button>
 	<button class="layui-btn layui-btn-sm" lay-event="delete"><i class="layui-icon layui-icon-delete"></i></button>
+	<button class="layui-btn layui-btn-sm" lay-event="refresh"><i class="layui-icon layui-icon-refresh"></i></button>
   </div>
 </script>
 <script type="text/html" id="bar_user">
@@ -151,25 +136,22 @@ layui.use(['table','layer'], function(){
 			  })
 		  }
 		break;
+		case 'refresh':
+            refresh();
+		break;
     };
   });
-	
+	//s搜索 
 	var $ = layui.$, active = {
 		searchBtn : function() {
-			var name = $('#name');
-			var mobile = $('#mobile');
-			var status = $('#status');
-			var other = $('#other');
+			var other = $('#condition');
 			//执行重载
 			table.reload('tableRoleReload', {
 				page : {
 					curr : 1//重新从第 1 页开始
 				},
 				where : {
-					userName : name.val(),
-					mobile : mobile.val(),
-					status : status.val(),
-					condition : other.val()
+					condition : condition.val()
 				}
 			});
 		}
@@ -178,6 +160,10 @@ layui.use(['table','layer'], function(){
 	function refresh(){
 		//s刷新当前页
         $(".layui-laypage-btn").click();
+     	 //s下面都能刷新  当前页
+       	/*table.reload('tableUserReload');//s重载
+		$(".layui-laypage-btn").click();//layui ajax 刷新 */
+		// location.reload()   重新加载页面
 	}
 	//s监听搜索按钮的事件
 	$('.tableSearch .layui-btn').on('click', function(){
@@ -236,7 +222,7 @@ layui.use(['table','layer'], function(){
 			title : '添加用户信息',
 			anim : 2, //s弹出动画
 			shadeClose : false, //s开启遮罩关闭
-			area : [ '500px', '700px' ],
+			area : [ '500px', '90%' ],
 			shade : [ 0.3, '#000' ],
 			maxmin : true, //s开启最大化最小化按钮
 			content : url ,

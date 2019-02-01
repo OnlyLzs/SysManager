@@ -43,6 +43,7 @@
     <button shiro:hasPermission="sys:user:add" class="layui-btn layui-btn-sm" lay-event="add"><i class="layui-icon layui-icon-add-1"></i></button> 
     <button class="layui-btn layui-btn-sm" lay-event="update"><i class="layui-icon layui-icon-edit"></i></button>
 	<button class="layui-btn layui-btn-sm" lay-event="delete"><i class="layui-icon layui-icon-delete"></i></button>
+	<button class="layui-btn layui-btn-sm" lay-event="refresh"><i class="layui-icon layui-icon-refresh"></i></button>
   </div>
 </script>
 <script type="text/html" id="bar_user">
@@ -157,6 +158,9 @@ layui.use(['table','layer'], function(){
 			  })
 		  }
 		break;
+		case 'refresh':
+			refresh();
+		break;
     };
   });
 	
@@ -184,6 +188,10 @@ layui.use(['table','layer'], function(){
 	function refresh(){
 		//s刷新当前页
         $(".layui-laypage-btn").click();
+     	 //s下面两个都能刷新  当前页
+       	/*table.reload('tableUserReload');//s重载
+		$(".layui-laypage-btn").click();//layui ajax 刷新 */
+		// location.reload()   重新加载页面
 	}
 	//s监听搜索按钮的事件
 	$('.tableSearch .layui-btn').on('click', function(){
