@@ -31,8 +31,8 @@
   </div>
 </script>
 <script type="text/html" id="bar_user">
-  <a shiro:hasPermission="sys:user:edit" class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
-  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+  <a shiro:hasPermission="sys:user:edit" class="layui-btn layui-btn-xs" lay-event="edit">权限</a>
+  <a shiro:hasPermission="sys:user:edit" class="layui-btn layui-btn-xs" lay-event="delete">删除</a>
 </script>
 <script type="text/html" id="statusTemplet">
   {{#  if(d.status == 1){ }}
@@ -94,8 +94,8 @@ layui.use(['table','layer'], function(){
     } else if(obj.event === 'del'){
       layer.confirm('真的删除行么', function(index){
     	  var list= new Array();
-        	list.push(data.userId);
-        	batchDeleteUser(list)
+        	list.push(data.roleId);
+        	batchDeleteRole(list)
       });
     } else if(obj.event === 'edit'){
       //layer.alert('编辑行：<br>'+ JSON.stringify(data))
@@ -115,7 +115,7 @@ layui.use(['table','layer'], function(){
 	});
     switch(obj.event){
 		case 'add':
-			addUser();
+			addRole();
 		break;
 		case 'update':
 		  if(data.length === 0){
@@ -124,7 +124,7 @@ layui.use(['table','layer'], function(){
 		    layer.msg('只能同时编辑一个');
 		  } else {
 			console.log(data)
-		    editUser(data);
+		    editRole(data);
 		  }
 		break;
 		case 'delete':
@@ -145,10 +145,10 @@ layui.use(['table','layer'], function(){
 	var $ = layui.$, active = {
 		searchBtn : function() {
 			var other = $('#condition');
-			//执行重载
+			//s执行重载
 			table.reload('tableRoleReload', {
 				page : {
-					curr : 1//重新从第 1 页开始
+					curr : 1//s重新从第 1 页开始
 				},
 				where : {
 					condition : condition.val()
@@ -171,10 +171,9 @@ layui.use(['table','layer'], function(){
 	    active[type] ? active[type].call(this) : '';
 	  });
 	
-	function batchDeleteUser(deleteList){
-		//layer.msg(JSON.stringify(deleteList)+"----"+$.type(JSON.stringify(deleteList))+"----"+deleteList+"----"+$.type(deleteList))
+	function batchDeleteRole(deleteList){
 		$.ajax({
-			url : "/sys/user/delete",
+			url : "/sys/role/delete",
 			type : "get",
 			//contentType : "application/json",
 			dataType : "json",
@@ -194,10 +193,10 @@ layui.use(['table','layer'], function(){
 		})
 		
 	}
-	function editUser(data){
+	function editRole(data){
 		console.log(data)
 		var id = data[0].userId;
-		var url = "/sys/user/edit";
+		var url = "/sys/role/edit";
 	    if (id != null) {
 	        layer.open({
 	            type: 2,
@@ -215,11 +214,11 @@ layui.use(['table','layer'], function(){
 	        });
 	    }
 	}
-	function addUser(data) {
+	function addRole(data) {
 		var url = "/sys/role/add"
 		layer.open({
 			type : 2,
-			title : '添加用户信息',
+			title : '添加角色信息',
 			anim : 2, //s弹出动画
 			shadeClose : false, //s开启遮罩关闭
 			area : [ '500px', '90%' ],

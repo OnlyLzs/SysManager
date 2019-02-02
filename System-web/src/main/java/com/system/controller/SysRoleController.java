@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -65,13 +66,28 @@ public class SysRoleController {
 		return mv;
 	}
 	
-	//方案二  在实体里面加字段 mapper 的 resultMap 不映射 （方案一 见addUser)
+	//s方案二  在实体里面加字段 mapper 的 resultMap 不映射 （方案一 见addUser)
 	@PostMapping("/add")
 	@ResponseBody
 	public StatusResult addRole(@RequestBody SysRole sysRole) {
 		logger.info("后台 添加角色");
-		
 		return sysRoleService.saveRole(sysRole);
+	}
+	
+	@GetMapping("/edit/{roleId}")
+	public ModelAndView editRoleHTML(ModelAndView mv,@PathVariable Integer roleId) {
+		logger.info("后台 编辑角色跳转页面");
+		SysRole sysRole = sysRoleService.queryByRoleId(roleId);
+		mv.setViewName("/role/edit");
+		mv.addObject("sysRole", sysRole);
+		return mv;
+	}
+	
+	@PostMapping("/edit")
+	@ResponseBody
+	public StatusResult editRole(@RequestBody SysRole sysRole) {
+		
+		return null;
 	}
 	
 }

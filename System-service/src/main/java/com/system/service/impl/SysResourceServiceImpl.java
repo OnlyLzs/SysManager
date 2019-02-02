@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.system.entity.SysResource;
 import com.system.mapper.SysResourceMapper;
+import com.system.response.StatusResult;
 import com.system.service.SysResourceService;
 
 @Service
@@ -37,6 +38,12 @@ public class SysResourceServiceImpl implements SysResourceService {
 	public List<SysResource> queryAll() {
 		// TODO Auto-generated method stub
 		return sysResourceMapper.queryAll();
+	}
+
+	@Override
+	public StatusResult queryByRoleId(Integer roleId) {
+		List<Integer> roleIdList = sysResourceMapper.queryByRoleId(roleId);
+		return StatusResult.ok(roleIdList);
 	}
 
 }

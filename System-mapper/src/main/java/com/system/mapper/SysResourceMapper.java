@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 
 import com.system.entity.SysResource;
+import com.system.response.StatusResult;
 
 @Mapper
 public interface SysResourceMapper {
@@ -42,4 +43,13 @@ public interface SysResourceMapper {
 	 * @return
 	 */
 	List<SysResource> queryAll();
+
+	/**
+	 * @Description 根据roleId查询所有权限
+	 * @author Jason
+	 * @date Feb 2, 2019
+	 * @param roleId
+	 * @return
+	 */
+	List<Integer> queryByRoleId(Integer roleId);
 }

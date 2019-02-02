@@ -3,6 +3,7 @@ package com.system.service;
 import java.util.List;
 
 import com.system.entity.SysResource;
+import com.system.response.StatusResult;
 
 /**
  * 权限管理接口
@@ -48,6 +49,15 @@ public interface SysResourceService {
 	 * @return
 	 */
 	List<SysResource> queryAll();
+
+	/**
+	 * @Description 根据角色Id查询对应的权限
+	 * @author Jason
+	 * @date Feb 2, 2019
+	 * @param roleId
+	 * @return
+	 */
+	StatusResult queryByRoleId(Integer roleId);
 
 	
 

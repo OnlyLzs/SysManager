@@ -61,4 +61,10 @@ public class SysRoleServiceImpl implements SysRoleService {
 		return StatusResult.error(ResponseStatusMsg.ADD_SUCCESS.getMsg());
 	}
 
+	@Override
+	public SysRole queryByRoleId(Integer roleId) {
+		
+		return sysRoleMapper.selectByPrimaryKey(roleId);
+	}
+
 }

@@ -203,9 +203,21 @@
 		WHERE
 		su.user_id = #{userId} and sr.type = '0'
 	</select>
-	
+	<!-- s查询所有权限 -->
 	<select id="queryAll" resultMap="BaseResultMap">
 		select * from sys_resource;
 	</select>
+	<!-- s根据roleId查询所有权限的Id -->
+	<select id="queryByRoleId" parameterType="java.lang.Integer">
+		SELECT
+		sre.resource_id
+		FROM
+		sys_role_resource srr
+		LEFT JOIN sys_role sro ON srr.role_id = sro.role_id
+		LEFT JOIN sys_resource sre ON sre.resource_id = srr.resource_id
+		WHERE
+		sro.role_id = #{roleId}
+	</select>
+	
 	
 </mapper>

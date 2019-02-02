@@ -44,6 +44,15 @@ public interface SysRoleService {
 	 */
 	StatusResult saveRole(SysRole sysRole);
 
+	/** 
+	 * @Description 根据 id 查询角色信息
+	 * @author Jason
+	 * @date Feb 2, 2019
+	 * @param roleId
+	 * @return
+	 */
+	SysRole queryByRoleId(Integer roleId);
+
 	
 
 }
