@@ -32,7 +32,7 @@
 </script>
 <script type="text/html" id="bar_user">
   <a shiro:hasPermission="sys:user:edit" class="layui-btn layui-btn-xs" lay-event="edit">权限</a>
-  <a shiro:hasPermission="sys:user:edit" class="layui-btn layui-btn-xs" lay-event="delete">删除</a>
+  <a shiro:hasPermission="sys:user:edit" class="layui-btn layui-btn-danger layui-btn-xs" lay-event="delete">删除</a>
 </script>
 <script type="text/html" id="statusTemplet">
   {{#  if(d.status == 1){ }}
@@ -66,7 +66,7 @@ layui.use(['table','layer'], function(){
       {type: 'checkbox', fixed: 'left'}
       ,{field:'roleId', title:'ID', fixed: 'left', unresize: true, sort: true}
       ,{field:'roleName', title:'角色名', edit: 'text'}
-      ,{field:'description', title:'描述', sort: true, totalRow: true}
+      ,{field:'description', title:'描述', sort: true}
       ,{field:'createDate', title:'创建时间'}
       ,{field:'updateDate', title:'修改时间'}
       ,{fixed: 'right', title:'操作', toolbar: '#bar_user'}
@@ -111,7 +111,7 @@ layui.use(['table','layer'], function(){
 	var data = checkStatus.data
 	,deleteList=[];
 	data.forEach(function(n,i){
-		deleteList.push(n.userId);
+		deleteList.push(n.roleId);
 	});
     switch(obj.event){
 		case 'add':
@@ -123,7 +123,6 @@ layui.use(['table','layer'], function(){
 		  } else if(data.length > 1){
 		    layer.msg('只能同时编辑一个');
 		  } else {
-			console.log(data)
 		    editRole(data);
 		  }
 		break;
@@ -132,7 +131,7 @@ layui.use(['table','layer'], function(){
 		    layer.msg('请选择一行');
 		  } else {
 			  layer.confirm('真的删除这'+data.length+'条数据么', function(){
-				  batchDeleteUser(deleteList);
+				  batchDeleteRole(deleteList);
 			  })
 		  }
 		break;
@@ -187,15 +186,15 @@ layui.use(['table','layer'], function(){
 				$(".layui-laypage-btn").click();
 			},
 			error : function(){
-				layer.msg(data.msg,{icon: 2});
+				layer.msg("系统错误",{icon: 2});
 				$(".layui-laypage-btn").click();
 			}
 		})
 		
 	}
 	function editRole(data){
-		console.log(data)
-		var id = data[0].userId;
+		console.log("角色信息--》"+data)
+		var id = data[0].roleId;
 		var url = "/sys/role/edit";
 	    if (id != null) {
 	        layer.open({

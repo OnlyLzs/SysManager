@@ -17,6 +17,7 @@ import com.system.response.StatusResult;
 import com.system.service.SysResourceService;
 import com.system.service.SysRoleResourceService;
 import com.system.service.SysRoleService;
+import com.system.service.SysUserRoleService;
 
 @Service
 public class SysRoleServiceImpl implements SysRoleService {
@@ -26,6 +27,9 @@ public class SysRoleServiceImpl implements SysRoleService {
 
 	@Autowired
 	SysRoleResourceService sysRoleResourceService;
+	
+	@Autowired
+	SysUserRoleService sysUserRoleService;
 	
 	@Override
 	public List<SysRole> queryAll() {
@@ -65,6 +69,31 @@ public class SysRoleServiceImpl implements SysRoleService {
 	public SysRole queryByRoleId(Integer roleId) {
 		
 		return sysRoleMapper.selectByPrimaryKey(roleId);
+	}
+
+	@Override
+	@Transactional
+	public StatusResult updateRole(SysRole sysRole) {
+		int roleResult = sysRoleMapper.updateByPrimaryKeySelective(sysRole);
+		sysRoleResourceService.saveOrUpdate(sysRole.getRoleId(), sysRole.getResourceIds());
+		if(roleResult>0) {
+			return StatusResult.ok(ResponseStatusMsg.UPDATE_SUCCESS.getMsg());
+		}
+		return StatusResult.error(ResponseStatusMsg.UPDATE_FAIL.getMsg());
+	}
+
+	@Override
+	public StatusResult deleteRole(List<Integer> ids) {
+		//s删除用户角色中间表
+		sysUserRoleService.deleteByRoleIds(ids);
+		//s删除角色权限中间表
+		sysRoleResourceService.deleteByRoleIds(ids);
+		//s删除角色
+		int result = sysRoleMapper.deleteByRoleIds(ids);
+		if (result>0) {
+			return StatusResult.ok(ResponseStatusMsg.DELETE_SUCCESS.getMsg());
+		}
+		return StatusResult.error(ResponseStatusMsg.DELETE_FAIL.getMsg());
 	}
 
 }

@@ -53,6 +53,24 @@ public interface SysRoleService {
 	 */
 	SysRole queryByRoleId(Integer roleId);
 
+	/**
+	 * @Description 修改角色信息
+	 * @author Jason
+	 * @date Feb 11, 2019
+	 * @param sysRole
+	 * @return
+	 */
+	StatusResult updateRole(SysRole sysRole);
+
+	/**
+	 * @Description 根据Ids 删除角色
+	 * @author Jason
+	 * @date Feb 11, 2019
+	 * @param ids
+	 * @return
+	 */
+	StatusResult deleteRole(List<Integer> ids);
+
 	
 
 }

@@ -23,4 +23,9 @@ public class SysRoleResourceServiceImpl implements SysRoleResourceService {
 		
 	}
 
+	@Override
+	public void deleteByRoleIds(List<Integer> ids) {
+		sysRoleResourceMapper.deleteByRoleIds(ids);
+	}
+
 }

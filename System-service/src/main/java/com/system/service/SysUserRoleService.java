@@ -21,11 +21,19 @@ public interface SysUserRoleService {
 	void saveOrUpdate(Integer userId, String roleIds);
 
 	/** 
-	 * @Description 根据ids 删除用户角色
+	 * @Description 根据用户ids 删除关联信息
 	 * @author Jason
 	 * @date Jan 29, 2019
 	 * @param ids
 	 */
-	void deleteRoleByUserIds(List<Integer> ids);
+	void deleteByUserIds(List<Integer> ids);
+
+	/**
+	 * @Description 根据角色ids 删除关联信息
+	 * @author Jason
+	 * @date Feb 11, 2019
+	 * @param ids
+	 */
+	void deleteByRoleIds(List<Integer> ids);
 
 }

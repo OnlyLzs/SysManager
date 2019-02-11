@@ -48,11 +48,19 @@
 		)
 		</foreach>
   </insert>
-  <!-- s根据用户Ids 删除用户权限 -->
-  <delete id="deleteRoleByUserIds" parameterType="java.util.List">
+  <!-- s根据用户Ids 删除关联数据 -->
+  <delete id="deleteByUserIds" parameterType="java.util.List">
   	delete from sys_user_role 
   	where user_id in 
   	<foreach collection="list" item="itemId" open="(" close=")" separator="," index="index">
+  		#{itemId}
+  	</foreach>
+  </delete>
+  <!-- s根据角色ids删除关联数据 -->
+  <delete id="deleteByRoleIds" parameterType="java.util.List">
+  	delete from sys_user_role 
+  	where role_id in
+  	<foreach collection="list" item="itemId" open="(" close=")" index="index" separator=",">
   		#{itemId}
   	</foreach>
   </delete>

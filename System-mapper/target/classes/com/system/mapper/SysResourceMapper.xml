@@ -208,7 +208,7 @@
 		select * from sys_resource;
 	</select>
 	<!-- s根据roleId查询所有权限的Id -->
-	<select id="queryByRoleId" parameterType="java.lang.Integer">
+	<select id="queryByRoleId" parameterType="java.lang.Integer" resultType="Integer">
 		SELECT
 		sre.resource_id
 		FROM

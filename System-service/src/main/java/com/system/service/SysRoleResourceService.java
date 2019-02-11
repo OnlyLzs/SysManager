@@ -13,4 +13,12 @@ public interface SysRoleResourceService {
 	 */
 	void saveOrUpdate(Integer roleId, List<Integer> list);
 
+	/**
+	 * @Description 根据角色删除 权限
+	 * @author Jason
+	 * @date Feb 11, 2019
+	 * @param ids
+	 */
+	void deleteByRoleIds(List<Integer> ids);
+
 }

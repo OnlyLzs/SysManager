@@ -184,6 +184,5 @@
 		<foreach collection="ids" item="itemId" open="(" close=")" separator="," index="index">
 			#{itemId}
 		</foreach>
-		
 	</delete>
 </mapper>

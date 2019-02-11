@@ -48,4 +48,12 @@
 		)
 	</foreach>
   </select>
+  <!-- s根据角色·删除中间表权限 -->
+  <delete id="deleteByRoleIds" parameterType="java.util.List">
+  	delete from sys_role_resource 
+  	where role_id in 
+  	<foreach collection="list" open="(" close=")" index="index" item="roleId" separator=",">
+  		#{roleId}
+  	</foreach>
+  </delete>
 </mapper>

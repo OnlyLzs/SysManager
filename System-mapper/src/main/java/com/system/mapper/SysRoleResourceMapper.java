@@ -28,4 +28,12 @@ public interface SysRoleResourceMapper {
 	 * @param resourceIds
 	 */
 	void save(@Param(value="roleId")Integer roleId, @Param(value="resourceIdArray")List<Integer> resourceIds);
+
+	/**
+	 * @Description 根据角色删除中间表权限
+	 * @author Jason
+	 * @date Feb 11, 2019
+	 * @param ids
+	 */
+	void deleteByRoleIds(List<Integer> ids);
 }

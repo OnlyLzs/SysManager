@@ -92,7 +92,7 @@
 					parent.layer.close(index);
 				},
 				error : function() {
-					parent.layer.msg('添加失败', {
+					parent.layer.msg('系统错误', {
 						icon : 2
 					});
 					parent.layer.close(index);
@@ -127,6 +127,7 @@
 			url : "/sys/resource/queryAll",
 			type :"get",
 			dataType: "json",
+			async: false,
 			success : function (data) {
 				if (data.status==200){
 					 ztree = $.fn.zTree.init($("#menuTree"), setting, data.data);
@@ -147,7 +148,7 @@
 		//s勾选已选中的菜单
 		var roleId = $("#roleId").val()
 	    $.ajax({
-	        type: "post",
+	        type: "get",
 	        url: '/sys/resource/queryByRoleId/'+roleId,
 	        contentType: "application/json",
 	        async: false,
@@ -157,7 +158,8 @@
 	                //s勾选角色所拥有的菜单
 	                var menuIds = R.data;
 	                for (var i = 0; i < menuIds.length; i++) {
-	                    var node = ztree.getNodeByParam("id", menuIds[i]);
+	                	ztree = $.fn.zTree.getZTreeObj("menuTree");
+	                    var node = ztree.getNodeByParam("id", menuIds[i], null);
 	                    if (node != null) {
 	                        ztree.checkNode(node, true, false);
 	                    }

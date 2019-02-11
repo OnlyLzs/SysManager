@@ -25,4 +25,13 @@ public interface SysRoleMapper {
 	List<SysRole> queryByUserId(Integer userId);
 
 	List<SysRole> queryByCondition(String condition);
+
+	/**
+	 * @Description 根据ids 删除角色
+	 * @author Jason
+	 * @date Feb 11, 2019
+	 * @param ids
+	 * @return
+	 */
+	int deleteByRoleIds(List<Integer> ids);
 }

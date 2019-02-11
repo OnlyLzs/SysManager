@@ -76,7 +76,7 @@ public class SysUserServiceImpl implements SysUserService {
 	@Transactional
 	public StatusResult deleteUser(List<Integer> ids) {
 		//s 先删除中间表的数据 再删除用户(可能没有角色) 
-		sysUserRoleService.deleteRoleByUserIds(ids);
+		sysUserRoleService.deleteByUserIds(ids);
 		//s删除用户
 		int result = sysUserMapper.deleteUserByIds(ids);
 		if (result>0) {

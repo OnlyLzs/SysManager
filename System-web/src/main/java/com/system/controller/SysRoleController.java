@@ -86,8 +86,14 @@ public class SysRoleController {
 	@PostMapping("/edit")
 	@ResponseBody
 	public StatusResult editRole(@RequestBody SysRole sysRole) {
-		
-		return null;
+		logger.info("后台 编辑角色信息");
+		return sysRoleService.updateRole(sysRole);
 	}
 	
+	@GetMapping("/delete")
+	@ResponseBody
+	public StatusResult deleteRole(@RequestParam(value="ids[]")List<Integer>ids) {
+		logger.info("后台 删除角色信息");
+		return sysRoleService.deleteRole(ids);
+	}
 }

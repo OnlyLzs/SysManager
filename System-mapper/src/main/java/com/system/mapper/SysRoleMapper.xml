@@ -72,9 +72,8 @@
       <if test="createDate != null">
         create_date = #{createDate,jdbcType=VARCHAR},
       </if>
-      <if test="updateDate != null">
-        update_date = #{updateDate,jdbcType=VARCHAR},
-      </if>
+      
+        update_date = NOW()
     </set>
     where role_id = #{roleId,jdbcType=INTEGER}
   </update>
@@ -104,4 +103,12 @@
   		</if>
   	</where>
   </select>
+  <!-- s根据ids 删除角色信息 -->
+	<delete id="deleteByRoleIds" parameterType="java.util.List">
+		delete from sys_Role
+		where role_id in
+		<foreach collection="list" item="itemId" open="(" close=")" separator="," index="index">
+			#{itemId}
+		</foreach>
+	</delete>
 </mapper>

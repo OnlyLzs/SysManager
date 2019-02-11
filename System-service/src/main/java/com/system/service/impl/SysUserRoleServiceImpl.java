@@ -23,8 +23,14 @@ public class SysUserRoleServiceImpl implements SysUserRoleService {
 	}
 
 	@Override
-	public void deleteRoleByUserIds(List<Integer> ids) {
-		sysUserRoleMapper.deleteRoleByUserIds(ids);
+	public void deleteByUserIds(List<Integer> ids) {
+		sysUserRoleMapper.deleteByUserIds(ids);
+	}
+
+	@Override
+	public void deleteByRoleIds(List<Integer> ids) {
+		sysUserRoleMapper.deleteByRoleIds(ids);
+		
 	}
 
 	
